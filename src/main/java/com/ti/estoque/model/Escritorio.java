@@ -18,7 +18,7 @@ public class Escritorio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String escritorio;
+    private String nomeEscritorio;
 
     @OneToMany(mappedBy = "escritorio")
     private List<Usuario> usuarios;

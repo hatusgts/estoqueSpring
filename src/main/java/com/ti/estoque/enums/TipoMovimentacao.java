@@ -1,7 +1,7 @@
 package com.ti.estoque.enums;
 
-public enum FatorMovimentacao {
+public enum TipoMovimentacao {
     ENTRADA,
     SAIDA,
-    TRANSFERENCIA
+    TRANSFERENCIA;
 }

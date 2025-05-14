@@ -1,32 +1,34 @@
 package com.ti.estoque.repository;
-import org.springframework.data.jpa.repository.JpaRepository;
-import com.ti.estoque.model.Equipamento;
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ti.estoque.model.Equipamento;
 
 public interface EquipamentoRepository extends JpaRepository<Equipamento, Long> {
 
     //Buscando Individual
 
-    List<Equipamento> findByNumeroPatrimonioContainingIgnoreCase(String numeroPatrimonio);
+    List<Equipamento> findByNumeroPatrimonioIgnoreCaseLike(String numeroPatrimonio);
     
-    List<Equipamento> findByTipoEquipamentoEquipamento(String tipoEquipamento);
+    List<Equipamento> findByTipoEquipamentoDescricaoIgnoreCaseLike(String tipoEquipamento);
 
-    List<Equipamento> findByMarcaMarca(String marca);
+    List<Equipamento> findByMarcaNomeMarcaIgnoreCaseLike(String marca);
 
-    List<Equipamento> findByModeloModelo(String modelo);
+    List<Equipamento> findByModeloNomeModeloIgnoreCaseLike(String modelo);
 
-    List<Equipamento> findByServiceTag(String service_tag);
+    List<Equipamento> findByServiceTagIgnoreCaseLike(String service_tag);
 
     //Buscando por Lista
 
-    List<Equipamento> findByTipoEquipamentoEquipamentoIn(List<String> equipamentos);
+    List<Equipamento> findByTipoEquipamentoDescricaoIgnoreCaseIn(List<String> equipamentos);
 
-    List<Equipamento> findByMarcaMarcaIn(List<String> marca);
+    List<Equipamento> findByMarcaNomeMarcaIgnoreCaseIn(List<String> marca);
 
-    List<Equipamento> findByModeloModeloIn(List<String> modelo);
+    List<Equipamento> findByModeloNomeModeloIgnoreCaseIn(List<String> modelo);
 
-    List<Equipamento> findByServiceTagIn(List<String> service_tag);
+    List<Equipamento> findByServiceTagIgnoreCaseIn(List<String> service_tag);
 
     //Buscando por Datas
     

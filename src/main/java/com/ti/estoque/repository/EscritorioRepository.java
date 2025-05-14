@@ -9,8 +9,8 @@ import com.ti.estoque.model.Escritorio;
 
 public interface EscritorioRepository extends JpaRepository<Escritorio, Long> {
     
-    Optional<Escritorio> findByEscritorioIgnoreCaseLike(String escritorio);
+    Optional<Escritorio> findByNomeEscritorioIgnoreCaseLike(String escritorio);
 
-    List<Escritorio> findByEscritorioIgnoreCaseIn(List<String> escritorio);
+    List<Escritorio> findByNomeEscritorioIgnoreCaseIn(List<String> escritorio);
     
 }

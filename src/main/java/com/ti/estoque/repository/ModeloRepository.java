@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ti.estoque.model.Modelo;
 
 public interface ModeloRepository extends JpaRepository<Modelo, Long>{
-    Optional<Modelo> findByModeloIgnoreCaseLike(String modelo);
-    List<Modelo> findByModeloIgnoreCaseIn(List<String> modelo);
+    Optional<Modelo> findByNomeModeloIgnoreCaseLike(String modelo);
+    List<Modelo> findByNomeModeloIgnoreCaseIn(List<String> modelo);
 }
