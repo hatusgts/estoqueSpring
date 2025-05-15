@@ -3,25 +3,16 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.ti.estoque.model.Equipamento;
 
+@Repository
 public interface EquipamentoRepository extends JpaRepository<Equipamento, Long> {
 
-    //Buscando Individual
-
-    List<Equipamento> findByNumeroPatrimonioIgnoreCaseLike(String numeroPatrimonio);
-    
-    List<Equipamento> findByTipoEquipamentoDescricaoIgnoreCaseLike(String tipoEquipamento);
-
-    List<Equipamento> findByMarcaNomeMarcaIgnoreCaseLike(String marca);
-
-    List<Equipamento> findByModeloNomeModeloIgnoreCaseLike(String modelo);
-
-    List<Equipamento> findByServiceTagIgnoreCaseLike(String service_tag);
-
     //Buscando por Lista
-
+    List<Equipamento> findByNumeroPatrimonioIgnoreCaseIn(List<String> numeroPatrimonio);
+    
     List<Equipamento> findByTipoEquipamentoDescricaoIgnoreCaseIn(List<String> equipamentos);
 
     List<Equipamento> findByMarcaNomeMarcaIgnoreCaseIn(List<String> marca);
@@ -36,6 +27,4 @@ public interface EquipamentoRepository extends JpaRepository<Equipamento, Long> 
     List<Equipamento> findByDataCadastroBefore(LocalDate date);
     List<Equipamento> findByDataCadastroAfter(LocalDate date);
     List<Equipamento> findByDataCadastroBetween(LocalDate startDate, LocalDate endDate);
-
-
 }

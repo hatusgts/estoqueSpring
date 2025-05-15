@@ -18,7 +18,7 @@ public class Departamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String NomeDepartamento;
+    private String nomeDepartamento;
 
     @OneToMany(mappedBy = "departamento")
     private List<Usuario> usuarios;

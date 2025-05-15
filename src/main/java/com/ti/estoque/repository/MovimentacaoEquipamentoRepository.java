@@ -1,31 +1,32 @@
 package com.ti.estoque.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.ti.estoque.enums.TipoMovimentacao;
 import com.ti.estoque.model.MovimentacaoEquipamento;
 
+@Repository
 public interface MovimentacaoEquipamentoRepository extends JpaRepository<MovimentacaoEquipamento, Long>{
     
     //Buscas individuais e retorna um objeto
 
     //Buscas pelas propriedades do objeto Equipamento, em MovimentacaoEquipamento
-    Optional<MovimentacaoEquipamento> findByEquipamentoId(Long id);
-    Optional<MovimentacaoEquipamento> findByEquipamentoNumeroPatrimonioIgnoreCaseLike(String numeroPatrimonio);
-    Optional<MovimentacaoEquipamento> findByEquipamentoTipoEquipamentoDescricaoIgnoreCaseLike(String tipoEquipamento);
-    Optional<MovimentacaoEquipamento> findByEquipamentoMarcaNomeMarcaIgnoreCaseLike(String marca);
-    Optional<MovimentacaoEquipamento> findByEquipamentoModeloNomeModeloIgnoreCaseLike(String modelo);
-    Optional<MovimentacaoEquipamento> findByEquipamentoServiceTagIgnoreCaseLike(String serviceTag);
+    List<MovimentacaoEquipamento> findByEquipamentoId(Long id);
+    List<MovimentacaoEquipamento> findByEquipamentoNumeroPatrimonioIgnoreCaseLike(String numeroPatrimonio);
+    List<MovimentacaoEquipamento> findByEquipamentoTipoEquipamentoDescricaoIgnoreCaseLike(String tipoEquipamento);
+    List<MovimentacaoEquipamento> findByEquipamentoMarcaNomeMarcaIgnoreCaseLike(String marca);
+    List<MovimentacaoEquipamento> findByEquipamentoModeloNomeModeloIgnoreCaseLike(String modelo);
+    List<MovimentacaoEquipamento> findByEquipamentoServiceTagIgnoreCaseLike(String serviceTag);
 
     //Buscas pelas propriedades do objeto TipoMovimentacao, em MovimentacaoEquipamento
-    Optional<MovimentacaoEquipamento> findByTipoMovimentacao(TipoMovimentacao tipoMovimentacao);
+    List<MovimentacaoEquipamento> findByTipoMovimentacao(TipoMovimentacao tipoMovimentacao);
 
     //Buscas pelas propriedades do objeto Usuario, em MovimentacaoEquipamento
-    Optional<MovimentacaoEquipamento> findByUsuarioId(Long id);
-    Optional<MovimentacaoEquipamento> findByUsuarioNomeIgnoreCaseLike(String nome);
+    List<MovimentacaoEquipamento> findByUsuarioId(Long id);
+    List<MovimentacaoEquipamento> findByUsuarioNomeIgnoreCaseLike(String nome);
 
     //Busca dentro de uma Lista, e retorna uma lista
 
