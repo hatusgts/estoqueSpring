@@ -21,21 +21,19 @@ public interface MovimentacaoEquipamentoRepository extends JpaRepository<Movimen
     List<MovimentacaoEquipamento> findByEquipamentoModeloNomeModeloIgnoreCaseLike(String modelo);
     List<MovimentacaoEquipamento> findByEquipamentoServiceTagIgnoreCaseLike(String serviceTag);
 
-    //Buscas pelas propriedades do objeto TipoMovimentacao, em MovimentacaoEquipamento
-    List<MovimentacaoEquipamento> findByTipoMovimentacao(TipoMovimentacao tipoMovimentacao);
-
     //Buscas pelas propriedades do objeto Usuario, em MovimentacaoEquipamento
     List<MovimentacaoEquipamento> findByUsuarioId(Long id);
     List<MovimentacaoEquipamento> findByUsuarioNomeIgnoreCaseLike(String nome);
 
+    List<MovimentacaoEquipamento> findByTipoMovimentacao(TipoMovimentacao tipoMovimentacao);
     //Busca dentro de uma Lista, e retorna uma lista
 
     //Busca Equipamento
     List<MovimentacaoEquipamento> findByEquipamentoIdIn(List<Long> ids);
     List<MovimentacaoEquipamento> findByEquipamentoNumeroPatrimonioIgnoreCaseIn(List<String> numeroPatrimonio);
-    List<MovimentacaoEquipamento> findByEquipamentoTipoEquipamentoDescricaoIn(List<String> tipoEquipamento);
-    List<MovimentacaoEquipamento> findByEquipamentoMarcaNomeMarcaIn(List<String> marca);
-    List<MovimentacaoEquipamento> findByEquipamentoModeloNomeModeloIn(List<String> modelo);
+    List<MovimentacaoEquipamento> findByEquipamentoTipoEquipamentoDescricaoIgnoreCaseIn(List<String> tipoEquipamento);
+    List<MovimentacaoEquipamento> findByEquipamentoMarcaNomeMarcaIgnoreCaseIn(List<String> marca);
+    List<MovimentacaoEquipamento> findByEquipamentoModeloNomeModeloIgnoreCaseIn(List<String> modelo);
     List<MovimentacaoEquipamento> findByEquipamentoServiceTagIgnoreCaseIn(List<String> serviceTag);
 
     //Buscas pelas propriedades do objeto TipoMovimentacao, em MovimentacaoEquipamento

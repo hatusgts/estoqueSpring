@@ -36,5 +36,6 @@ public interface MovimentacaoUtensilioRepository extends JpaRepository<Movimenta
     //Busca pelas propriedades de tipoMovimentacao, em MovimentacaoEquipamento
     List<MovimentacaoUtensilio> findByTipoMovimentacaoIn(List<TipoMovimentacao> tipoMovimentacao);
     
-
+    List<MovimentacaoUtensilio> findByUsuarioIdIn(List<Long> ids);
+    List<MovimentacaoUtensilio> findByUsuarioNomeIgnoreCaseIn(List<String> nome);
 }

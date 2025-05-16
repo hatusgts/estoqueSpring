@@ -27,6 +27,8 @@ public class Usuario {
     private String email;
     public boolean isAdmin;
 
+    private String senha;
+
     @ManyToOne
     @JoinColumn (name = "id_cargo")
     private Cargo cargo;

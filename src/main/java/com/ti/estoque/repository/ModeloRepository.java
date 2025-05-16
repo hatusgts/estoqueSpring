@@ -8,6 +8,8 @@ import com.ti.estoque.model.Modelo;
 
 @Repository
 public interface ModeloRepository extends JpaRepository<Modelo, Long>{
-    List<Modelo> findByNomeModeloIgnoreCaseLike(String modelo);
+    
+    List<Modelo> findByIdIn(List<Long> ids);
+
     List<Modelo> findByNomeModeloIgnoreCaseIn(List<String> modelo);
 }

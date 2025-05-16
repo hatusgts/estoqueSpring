@@ -9,7 +9,8 @@ import com.ti.estoque.model.Marca;
 
 @Repository
 public interface MarcaRepository extends JpaRepository<Marca, Long> {
-    List<Marca> findByNomeMarcaIgnoreCaseLike(String marca);
+
+    List<Marca> findByIdIn(List<Long> id);
 
     List<Marca> findByNomeMarcaIgnoreCaseIn(List<String> marca);
 }

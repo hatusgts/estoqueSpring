@@ -10,6 +10,8 @@ import com.ti.estoque.model.Escritorio;
 @Repository
 public interface EscritorioRepository extends JpaRepository<Escritorio, Long> {
 
+    List<Escritorio> findByIdIn(List<Long> ids);
+
     List<Escritorio> findByNomeEscritorioIgnoreCaseIn(List<String> escritorio);
     
 }

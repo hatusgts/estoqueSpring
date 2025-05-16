@@ -8,6 +8,9 @@ import com.ti.estoque.model.TipoEquipamento;
 
 @Repository
 public interface TipoEquipamentoRepository extends JpaRepository <TipoEquipamento, Long> {
+
+        List<TipoEquipamento> findByIdIn(List<Long> id);
+
         List<TipoEquipamento> findByDescricaoIgnoreCaseLike(String descricao);
 
         List<TipoEquipamento> findByDescricaoIgnoreCaseIn(List<String> descricao);
