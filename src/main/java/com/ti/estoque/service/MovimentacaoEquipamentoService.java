@@ -1,19 +1,27 @@
 package com.ti.estoque.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ti.estoque.dto.MovimentacaoEquipamentoRequestDTO;
+import com.ti.estoque.dto.MovimentacaoEquipamentoResponseDTO;
 import com.ti.estoque.enums.TipoMovimentacao;
+import com.ti.estoque.mappers.MovimentacaoEquipamentoMapper;
 import com.ti.estoque.model.MovimentacaoEquipamento;
 import com.ti.estoque.repository.MovimentacaoEquipamentoRepository;
+
 
 @Service
 public class MovimentacaoEquipamentoService {
 
     @Autowired
     private MovimentacaoEquipamentoRepository movimentacao;
+    
+    @Autowired
+    private MovimentacaoEquipamentoMapper movimentacaoMapper;
     
     private <T> List<T> validarLista(List<T> lista, String mensagemErro) {
         if (lista.isEmpty()) {
@@ -22,135 +30,193 @@ public class MovimentacaoEquipamentoService {
         return lista;
     }
 
-    public List<MovimentacaoEquipamento> findAll() {
-        return validarLista(movimentacao.findAll(), "Não foram encontradas movimentações de equipamentos.");
+    public List<MovimentacaoEquipamentoResponseDTO> findAll() {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(movimentacao.findAll(), 
+            "Não foram encontradas movimentações de equipamentos.");
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public MovimentacaoEquipamento findId(Long id) {
-        return movimentacao.findById(id)
+    public MovimentacaoEquipamentoResponseDTO findId(Long id) {
+        MovimentacaoEquipamento movEquipamento = movimentacao.findById(id)
             .orElseThrow(() -> new RuntimeException("Não foi encontrado uma movimentação com esse id."));
+        return movimentacaoMapper.toDto(movEquipamento);
     }
 
-    public List<MovimentacaoEquipamento> findByNumPatrimonio(String numPatrimonio) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> findByNumPatrimonio(String numPatrimonio) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoNumeroPatrimonioIgnoreCaseLike(numPatrimonio),
             "Não foram encontrados registros com esse número de Patrimônio."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> findByTipoEquipamento(String tipoEquipamento) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> findByTipoEquipamento(String tipoEquipamento) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoTipoEquipamentoDescricaoIgnoreCaseLike(tipoEquipamento),
             "Não foram encontrados registros desse tipo de Equipamento."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> findByMarca(String marca) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> findByMarca(String marca) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoMarcaNomeMarcaIgnoreCaseLike(marca),
             "Não foram encontrados registros de equipamentos dessa marca."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> findByModelo(String modelo) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> findByModelo(String modelo) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoModeloNomeModeloIgnoreCaseLike(modelo),
             "Não foram encontrados registros de equipamentos desse modelo."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> findByServiceTag(String serviceTag) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> findByServiceTag(String serviceTag) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoServiceTagIgnoreCaseLike(serviceTag),
             "Não foram encontrados registros de equipamentos com essa Service Tag."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> findByTipoMovimentacao(TipoMovimentacao tipoMovimentacao) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> findByTipoMovimentacao(TipoMovimentacao tipoMovimentacao) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByTipoMovimentacao(tipoMovimentacao),
             "Não foram encontrados registros desse tipo de Movimentação."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> findByUserId(Long id) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> findByUserId(Long id) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByUsuarioId(id),
             "Não foram encontrados registros de equipamentos movimentados com esse ID."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> findByUserName(String name) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> findByUserName(String name) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByUsuarioNomeIgnoreCaseLike(name),
             "Não foram encontrados registros desse Usuário."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> getEquipamentoIds(List<Long> ids) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> getEquipamentoIds(List<Long> ids) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoIdIn(ids),
             "Não foram encontrados registros de equipamentos com estes IDs."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> getNumPatrimonios(List<String> patrimonios) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> getNumPatrimonios(List<String> patrimonios) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoNumeroPatrimonioIgnoreCaseIn(patrimonios),
             "Não foram encontrados registros de equipamentos com estes números de Patrimônio."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> getTiposEquipamentos(List<String> tipoEquipamento) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> getTiposEquipamentos(List<String> tipoEquipamento) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoTipoEquipamentoDescricaoIgnoreCaseIn(tipoEquipamento),
             "Não foram encontrados registros de equipamentos desses tipos."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> getMarcas(List<String> marcas) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> getMarcas(List<String> marcas) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoMarcaNomeMarcaIgnoreCaseIn(marcas),
             "Não foram encontrados registros de equipamentos dessas marcas."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> getModelos(List<String> modelos) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> getModelos(List<String> modelos) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoModeloNomeModeloIgnoreCaseIn(modelos),
             "Não foram encontrados registros de equipamentos desses modelos."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> getServiceTags(List<String> serviceTags) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> getServiceTags(List<String> serviceTags) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByEquipamentoServiceTagIgnoreCaseIn(serviceTags),
             "Não foram encontrados registros de equipamentos com essas Service Tags."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> getTiposMovimentacao(List<TipoMovimentacao> tipos) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> getTiposMovimentacao(List<TipoMovimentacao> tipos) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByTipoMovimentacaoIn(tipos),
             "Não foram encontrados registros desses tipos de Movimentação."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> getUserIds(List<Long> ids) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> getUserIds(List<Long> ids) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByUsuarioIdIn(ids),
             "Não foram encontrados registros com esses IDs de Usuário."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<MovimentacaoEquipamento> getUsers(List<String> nomes) {
-        return validarLista(
+    public List<MovimentacaoEquipamentoResponseDTO> getUsers(List<String> nomes) {
+        List<MovimentacaoEquipamento> movimentacoes = validarLista(
             movimentacao.findByUsuarioNomeIgnoreCaseIn(nomes),
             "Não foram encontrados registros de equipamentos desses usuários."
         );
+        return movimentacoes.stream()
+                .map(movimentacaoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public MovimentacaoEquipamento saveMovimentacao(MovimentacaoEquipamento registro) {
-        return movimentacao.save(registro);
+    public MovimentacaoEquipamentoResponseDTO saveMovimentacao(MovimentacaoEquipamentoRequestDTO requestDTO) {
+        MovimentacaoEquipamento entity = movimentacaoMapper.toEntity(requestDTO);
+        MovimentacaoEquipamento savedEntity = movimentacao.save(entity);
+        return movimentacaoMapper.toDto(savedEntity);
     }
 }

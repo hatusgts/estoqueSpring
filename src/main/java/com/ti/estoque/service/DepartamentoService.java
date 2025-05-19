@@ -1,10 +1,14 @@
 package com.ti.estoque.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ti.estoque.dto.DepartamentoRequestDTO;
+import com.ti.estoque.dto.DepartamentoResponseDTO;
+import com.ti.estoque.mappers.DepartamentoMapper;
 import com.ti.estoque.model.Departamento;
 import com.ti.estoque.repository.DepartamentoRepository;
 
@@ -14,31 +18,52 @@ public class DepartamentoService {
     @Autowired
     private DepartamentoRepository departamentoRepository;
 
-    public List<Departamento> findAll() {
+    public DepartamentoResponseDTO findDtoId(Long id){
+        Departamento departamento = departamentoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Departamento não encontrado com o ID: " + id));
+
+        return DepartamentoMapper.toDto(departamento);
+    }
+
+    public List<DepartamentoResponseDTO> findAll() {
         List<Departamento> departamentos = departamentoRepository.findAll();
         if (departamentos.isEmpty()) {
             throw new RuntimeException("Nenhum departamento encontrado.");
         }
-        return departamentos;
+        List<DepartamentoResponseDTO> lista = new ArrayList<>();
+        for(Departamento i : departamentos){
+            lista.add(DepartamentoMapper.toDto(i));
+        }
+        return lista;
     }
 
-    public List<Departamento> findID(List<Long> ids) {
+    public List<DepartamentoResponseDTO> findID(List<Long> ids) {
         List<Departamento> departamentos = departamentoRepository.findByIdIn(ids);
         if (departamentos.isEmpty()) {
             throw new RuntimeException("Nenhum departamento encontrado com os IDs fornecidos.");
         }
-        return departamentos;
+        List<DepartamentoResponseDTO> lista = new ArrayList<>();
+        for(Departamento i : departamentos){
+            lista.add(DepartamentoMapper.toDto(i));
+        }
+        return lista;
     }
 
-    public List<Departamento> findDepartamentos(List<String> departamento) {
+    public List<DepartamentoResponseDTO> findDepartamentos(List<String> departamento) {
         List<Departamento> departamentos = departamentoRepository.findByNomeDepartamentoIgnoreCaseIn(departamento);
         if (departamentos.isEmpty()) {
             throw new RuntimeException("Nenhum departamento encontrado com os nomes fornecidos.");
         }
-        return departamentos;
+        List<DepartamentoResponseDTO> lista = new ArrayList<>();
+        for(Departamento i : departamentos){
+            lista.add(DepartamentoMapper.toDto(i));
+        }
+        return lista;
     }
 
-    public Departamento saveDepartamento(Departamento item){
-        return departamentoRepository.save(item);
+    public DepartamentoResponseDTO saveDepartamento(DepartamentoRequestDTO item){
+        Departamento departamento = DepartamentoMapper.toEntity(item);
+        Departamento savedDepartamento = departamentoRepository.save(departamento);
+        return DepartamentoMapper.toDto(savedDepartamento);
     }
 }

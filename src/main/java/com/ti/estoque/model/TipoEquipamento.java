@@ -20,8 +20,6 @@ public class TipoEquipamento {
 
     private String descricao;
 
-    private boolean patrimonio;
-
     @OneToMany(mappedBy = "tipoEquipamento")
     private List<Equipamento> equipamentos;
 
