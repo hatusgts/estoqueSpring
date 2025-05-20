@@ -11,6 +11,8 @@ import com.ti.estoque.model.Cargo;
 public interface CargoRepository extends JpaRepository<Cargo, Long> {
     List<Cargo> findByNomeCargoIgnoreCaseLike(String cargo);
 
+    List<Cargo> findByNomeCargoIgnoreCaseContaining(String nome);
+    
     List<Cargo> findByIdIn(List<Long> ids);
 
     List<Cargo> findByNomeCargoIgnoreCaseIn(List<String> cargo);

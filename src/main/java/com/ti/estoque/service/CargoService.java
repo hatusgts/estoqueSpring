@@ -2,6 +2,7 @@ package com.ti.estoque.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class CargoService {
         return lista;
     }
 
-    public List<CargoResponseDTO> findById(List<Long> ids) {
+    public List<CargoResponseDTO> findByIdIn(List<Long> ids) {
         List<Cargo> cargos = cargoRepository.findByIdIn(ids);
         if (cargos.isEmpty()) {
             throw new RuntimeException("Nenhum cargo encontrado com os IDs fornecidos.");
@@ -49,15 +50,26 @@ public class CargoService {
         return lista;
     }
 
-    public List<CargoResponseDTO> findByNomeCargoIgnoreCaseIn(List<String> nomeCargo) {
-        List<Cargo> cargos = cargoRepository.findByNomeCargoIgnoreCaseIn(nomeCargo);
-        if (cargos.isEmpty()) {
+    public List<CargoResponseDTO> findByNomeCargoIgnoreCaseContainingIn(List<String> nomes) {
+        List<Cargo> resultados = new ArrayList<>();
+
+        for (String nome : nomes) {
+            List<Cargo> encontrados = cargoRepository.findByNomeCargoIgnoreCaseContaining(nome);
+            resultados.addAll(encontrados);
+        }
+
+        if (resultados.isEmpty()) {
             throw new RuntimeException("Nenhum cargo encontrado com os nomes fornecidos.");
         }
-        List<CargoResponseDTO> lista = new ArrayList<>();
-        for(Cargo i : cargos){
-            lista.add(CargoMapper.toDto(i));
-        }
+
+        List<Cargo> semDuplicados = resultados.stream()
+            .distinct()
+            .collect(Collectors.toList());
+
+        List<CargoResponseDTO> lista = semDuplicados.stream()
+            .map(CargoMapper::toDto)
+            .collect(Collectors.toList());
+
         return lista;
     }
 
