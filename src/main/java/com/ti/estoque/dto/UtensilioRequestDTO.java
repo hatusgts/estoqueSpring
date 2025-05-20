@@ -7,6 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UtensilioRequestDTO {
+
+    private Long id;
+    
     @NotNull
     private Long idTipoEquipamento;
 

@@ -18,7 +18,7 @@ public class DepartamentoService {
     @Autowired
     private DepartamentoRepository departamentoRepository;
 
-    public DepartamentoResponseDTO findDtoId(Long id){
+    public DepartamentoResponseDTO findById(Long id){
         Departamento departamento = departamentoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Departamento não encontrado com o ID: " + id));
 
@@ -61,9 +61,26 @@ public class DepartamentoService {
         return lista;
     }
 
-    public DepartamentoResponseDTO saveDepartamento(DepartamentoRequestDTO item){
+    public DepartamentoResponseDTO create(DepartamentoRequestDTO item){
         Departamento departamento = DepartamentoMapper.toEntity(item);
         Departamento savedDepartamento = departamentoRepository.save(departamento);
         return DepartamentoMapper.toDto(savedDepartamento);
+    }
+
+    public DepartamentoResponseDTO update(DepartamentoRequestDTO item){
+        Departamento dp = departamentoRepository.findById(item.getId())
+        .orElseThrow(()-> new RuntimeException("Departamento não encontrado"));
+
+        dp.setNomeDepartamento(item.getNomeDepartamento());
+
+        Departamento atualizado = departamentoRepository.save(dp);
+        return DepartamentoMapper.toDto(atualizado);
+    }
+
+    public void delete(Long id){
+        Departamento dp = departamentoRepository.findById(id)
+        .orElseThrow(()-> new RuntimeException("Departamento Não encontrado"));
+
+        departamentoRepository.delete(dp);
     }
 }

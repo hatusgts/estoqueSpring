@@ -29,7 +29,7 @@ public class ModeloService {
                 .collect(Collectors.toList());
     }
 
-    public ModeloResponseDTO findId(Long id) {
+    public ModeloResponseDTO findById(Long id) {
         Modelo modelo = modeloRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Modelo não encontrado com id: " + id));
         
@@ -58,9 +58,27 @@ public class ModeloService {
                 .collect(Collectors.toList());
     }
 
-    public ModeloResponseDTO saveModelo(ModeloRequestDTO requestDTO){
+    public ModeloResponseDTO create(ModeloRequestDTO requestDTO){
         Modelo modelo = ModeloMapper.toEntity(requestDTO);
         Modelo savedModelo = modeloRepository.save(modelo);
         return ModeloMapper.toDto(savedModelo);
+    }
+
+    public ModeloResponseDTO update(ModeloRequestDTO dto){
+        Modelo modelo = modeloRepository.findById(dto.getId())
+        .orElseThrow(() -> new RuntimeException("Modelo não encontrado"));
+        
+        modelo.setNomeModelo(dto.getNomeModelo());
+
+        Modelo atualizado = modeloRepository.save(modelo);
+
+        return ModeloMapper.toDto(atualizado);
+    }
+
+    public void delete(Long id){
+        Modelo modelo = modeloRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Modelo não encontrado"));
+        
+        modeloRepository.delete(modelo);
     }
 }

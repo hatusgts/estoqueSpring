@@ -3,7 +3,6 @@ package com.ti.estoque.dto;
 import java.time.LocalDate;
 
 import com.ti.estoque.enums.ModeloTrabalho;
-import com.ti.estoque.model.Escritorio;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UsuarioRequestDTO {
+
+    private Long id;
 
     @NotBlank
     private String nome;
@@ -34,7 +35,7 @@ public class UsuarioRequestDTO {
 
     private ModeloTrabalho modeloTrabalho;
 
-    private Escritorio escritorio;
+    private Long idEscritorio;
 
     private LocalDate dataCadastro;
 

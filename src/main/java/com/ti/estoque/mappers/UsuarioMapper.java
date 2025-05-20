@@ -45,7 +45,7 @@ public class UsuarioMapper {
         .orElseThrow(() -> new RuntimeException("Departamento não encontrado"));
 
         Escritorio escritorio = escritorioRepository.findById(dto.getIdCargo())
-        .orElseThrow(() -> new RuntimeException("Cargo não encontrado"));
+        .orElseThrow(() -> new RuntimeException("Escritorio não encontrado"));
 
         entity.setNome(dto.getNome());
         entity.setCpf(dto.getCpf());

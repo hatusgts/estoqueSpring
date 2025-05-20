@@ -7,6 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DepartamentoRequestDTO {
+
+    private long id;
+    
     @NotBlank
     private String nomeDepartamento;
 }

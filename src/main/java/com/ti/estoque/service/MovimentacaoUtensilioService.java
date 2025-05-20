@@ -14,15 +14,27 @@ import com.ti.estoque.enums.TipoMovimentacao;
 import com.ti.estoque.mappers.MovimentacaoUtensilioMapper;
 import com.ti.estoque.model.MovimentacaoUtensilio;
 import com.ti.estoque.repository.MovimentacaoUtensilioRepository;
+import com.ti.estoque.repository.UsuarioRepository;
+import com.ti.estoque.repository.UtensilioRepository;
 
 @Service
 public class MovimentacaoUtensilioService {
+
+    private final UsuarioRepository usuarioRepository;
+
+    private final UtensilioRepository utensilioRepository;
 
     @Autowired
     private MovimentacaoUtensilioRepository movimentacaoUtensilioRepository;
     
     @Autowired
     private MovimentacaoUtensilioMapper movimentacaoUtensilioMapper;
+    
+    @SuppressWarnings("unused")
+    MovimentacaoUtensilioService(UtensilioRepository utensilioRepository, UsuarioRepository usuarioRepository) {
+        this.utensilioRepository = utensilioRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
 
     @SuppressWarnings("unused")
     private List<MovimentacaoUtensilioResponseDTO> findAll(){
@@ -46,6 +58,13 @@ public class MovimentacaoUtensilioService {
         return entidades.stream()
                 .map(movimentacaoUtensilioMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public MovimentacaoUtensilioResponseDTO findById(Long id){
+        MovimentacaoUtensilio moviment = movimentacaoUtensilioRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Movimentacao não encontrado"));
+
+        return movimentacaoUtensilioMapper.toDto(moviment);
     }
 
     public List<MovimentacaoUtensilioResponseDTO> findByUtensilioId(Long id) {
@@ -160,9 +179,41 @@ public class MovimentacaoUtensilioService {
         return converterParaDTO(entidades);
     }
 
-    public MovimentacaoUtensilioResponseDTO salvarMovimentacao(MovimentacaoUtensilioRequestDTO dto) {
+    public MovimentacaoUtensilioResponseDTO create(MovimentacaoUtensilioRequestDTO dto) {
         MovimentacaoUtensilio entidade = movimentacaoUtensilioMapper.toEntity(dto);
         MovimentacaoUtensilio salva = movimentacaoUtensilioRepository.save(entidade);
         return movimentacaoUtensilioMapper.toDto(salva);
+    }
+
+    public MovimentacaoUtensilioResponseDTO update(MovimentacaoUtensilioRequestDTO dto){
+        MovimentacaoUtensilio moviment = movimentacaoUtensilioRepository.findById(dto.getId())
+        .orElseThrow(() -> new RuntimeException("movimentação não encontrada"));
+
+        moviment.setUtensilio(
+            utensilioRepository.findById(dto.getIdUtensilio())
+            .orElseThrow(() -> new RuntimeException("Utensilio não encontrado"))
+        );
+
+        moviment.setQuantidade(dto.getQuantidade());
+
+        moviment.setTipoMovimentacao(dto.getTipoMovimentacao());
+
+        moviment.setUsuario(
+            usuarioRepository.findById(dto.getId())
+            .orElseThrow(() -> new RuntimeException("Usuario não encontrado"))
+        );
+
+        moviment.setDataMovimentacao(dto.getDataMovimentacao());
+
+        MovimentacaoUtensilio atualizada = movimentacaoUtensilioRepository.save(moviment);
+
+        return movimentacaoUtensilioMapper.toDto(atualizada);
+    }
+
+    public void delete(Long id){
+        MovimentacaoUtensilio moviment = movimentacaoUtensilioRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Movimentação não encontrada"));
+
+        movimentacaoUtensilioRepository.delete(moviment);
     }
 }

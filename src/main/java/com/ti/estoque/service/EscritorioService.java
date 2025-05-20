@@ -57,9 +57,27 @@ public class EscritorioService {
                 .collect(Collectors.toList());
     }
 
-    public EscritorioResponseDTO saveEscritorio(EscritorioRequestDTO requestDTO){
+    public EscritorioResponseDTO create(EscritorioRequestDTO requestDTO){
         Escritorio escritorio = escritorioMapper.toEntity(requestDTO);
         Escritorio savedEscritorio = escritorioRepository.save(escritorio);
         return escritorioMapper.toDto(savedEscritorio);
+    }
+
+    public EscritorioResponseDTO update(EscritorioRequestDTO dto){
+        Escritorio escritorio = escritorioRepository.findById(dto.getId())
+        .orElseThrow(() -> new RuntimeException("Escritorio não encontrado"));
+
+        escritorio.setNomeEscritorio(dto.getNomeEscritorio());
+
+        Escritorio atualizado = escritorioRepository.save(escritorio);
+
+        return escritorioMapper.toDto(atualizado);
+    }
+
+    public void delete(Long id){
+        Escritorio escritorio = escritorioRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Escritorio não encontrado"));
+
+        escritorioRepository.delete(escritorio);
     }
 }

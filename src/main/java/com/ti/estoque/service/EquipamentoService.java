@@ -11,17 +11,40 @@ import com.ti.estoque.dto.EquipamentoResponseDTO;
 import com.ti.estoque.mappers.EquipamentoMapper;
 import com.ti.estoque.model.Equipamento;
 import com.ti.estoque.repository.EquipamentoRepository;
+import com.ti.estoque.repository.MarcaRepository;
+import com.ti.estoque.repository.ModeloRepository;
+import com.ti.estoque.repository.TipoEquipamentoRepository;
 
 @Service
 public class EquipamentoService {
+
+    private final ModeloRepository modeloRepository;
+
+    private final TipoEquipamentoRepository tipoEquipamentoRepository;
 
     private final EquipamentoRepository equipamentoRepository;
 
     private final EquipamentoMapper equipamentoMapper;
 
-    public EquipamentoService(EquipamentoRepository equipamentoRepository, EquipamentoMapper equipamentoMapper){
+    private final MarcaRepository marcaRepository;
+
+    public EquipamentoService(EquipamentoRepository equipamentoRepository,
+    EquipamentoMapper equipamentoMapper,
+    TipoEquipamentoRepository tipoEquipamentoRepository,
+    MarcaRepository marcaRepository
+    , ModeloRepository modeloRepository){
         this.equipamentoRepository = equipamentoRepository;
         this.equipamentoMapper = equipamentoMapper;
+        this.tipoEquipamentoRepository = tipoEquipamentoRepository;
+        this.marcaRepository = marcaRepository;
+        this.modeloRepository = modeloRepository;
+    }
+
+    public EquipamentoResponseDTO findById(Long id){
+        Equipamento equipamento = equipamentoRepository.findById(id)
+        .orElseThrow(()-> new RuntimeException("Equipamento não encontrado"));
+
+        return equipamentoMapper.toDto(equipamento);
     }
 
     public List<EquipamentoResponseDTO> findAll() {
@@ -106,9 +129,41 @@ public class EquipamentoService {
                 .collect(Collectors.toList());
     }
 
-    public EquipamentoResponseDTO saveEquipamento(EquipamentoRequestDTO dto) {
+    public EquipamentoResponseDTO create(EquipamentoRequestDTO dto) {
         Equipamento equipamento = equipamentoMapper.toEntity(dto);
         Equipamento savedEquipamento = equipamentoRepository.save(equipamento);
         return equipamentoMapper.toDto(savedEquipamento);
     }
+
+    public EquipamentoResponseDTO update(EquipamentoRequestDTO dto){
+        Equipamento equipamento = equipamentoRepository.findById(dto.getId())
+        .orElseThrow(() -> new RuntimeException("Equipamento não encontrado"));
+
+        equipamento.setNumeroPatrimonio(dto.getNumeroPatrimonio());
+        equipamento.setTipoEquipamento(
+            tipoEquipamentoRepository.findById(dto.getTipoEquipamentoID())
+                .orElseThrow(() -> new RuntimeException("Equipamento não encontrado"))
+        );
+        equipamento.setMarca(
+            marcaRepository.findById(dto.getIdMarca())
+            .orElseThrow(() -> new RuntimeException("Equipamento não encontrado"))
+        );
+        equipamento.setModelo(
+            modeloRepository.findById(dto.getIdModelo())
+            .orElseThrow(() -> new RuntimeException("Modelo não encontrado"))
+        );
+        equipamento.setServiceTag(dto.getServiceTag());
+        equipamento.setDataCadastro(dto.getData());
+
+        Equipamento atualizado = equipamentoRepository.save(equipamento);
+        return equipamentoMapper.toDto(atualizado);
+    }
+
+    public void delete(Long id){
+        Equipamento equipamento = equipamentoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Equipamento não encontrado"));
+
+        equipamentoRepository.delete(equipamento);
+    }
+
 }

@@ -12,6 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MovimentacaoEquipamentoRequestDTO {
+
+    private Long id;
     
     @NotNull
     private Long idEquipamento;

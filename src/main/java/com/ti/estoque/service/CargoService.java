@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ti.estoque.dto.CargoRequestDTO;
+import com.ti.estoque.dto.CargoResponseDTO;
 import com.ti.estoque.mappers.CargoMapper;
 import com.ti.estoque.model.Cargo;
 import com.ti.estoque.repository.CargoRepository;
-import com.ti.estoque.dto.CargoResponseDTO;
 
 @Service
 public class CargoService {
@@ -18,9 +18,10 @@ public class CargoService {
     @Autowired
     private CargoRepository cargoRepository;
 
-    public CargoResponseDTO findDtoId(Long id){
+    public CargoResponseDTO findById(Long id) {
         Cargo cargo = cargoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Cargo não encontrado com o ID: " + id));
+            .orElseThrow(() -> new RuntimeException("Cargo não encontrado"));
+        
         return CargoMapper.toDto(cargo);
     }
 
@@ -60,10 +61,27 @@ public class CargoService {
         return lista;
     }
 
-
-    public CargoResponseDTO saveCargo(CargoRequestDTO item){
+    public CargoResponseDTO create(CargoRequestDTO item){
         Cargo cargo = CargoMapper.toEntity(item);
         Cargo savedCargo = cargoRepository.save(cargo);
         return CargoMapper.toDto(savedCargo);
+    }
+
+    public CargoResponseDTO update(CargoRequestDTO item){
+        Cargo cargo = cargoRepository.findById(item.getId())
+        .orElseThrow(() -> new RuntimeException("Cargo não encontrado"));
+
+        cargo.setNomeCargo(item.getNomeCargo());
+
+        Cargo atualizado = cargoRepository.save(cargo);
+
+        return CargoMapper.toDto(atualizado);
+    }
+
+    public void delete(Long id){
+        Cargo cargo = cargoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Cargo não encontrado"));
+
+        cargoRepository.delete(cargo);
     }
 }

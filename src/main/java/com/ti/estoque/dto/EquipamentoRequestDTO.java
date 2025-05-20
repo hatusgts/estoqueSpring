@@ -11,6 +11,8 @@ import lombok.Setter;
 @Setter
 public class EquipamentoRequestDTO {
 
+    private long id;
+
     @NotBlank
     private String numeroPatrimonio;
 

@@ -8,6 +8,8 @@ import lombok.Setter;
 @Setter
 public class TipoEquipamentoRequestDTO {
 
+    private Long id;
+
     @NotBlank
     private String descricao;
     

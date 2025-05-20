@@ -20,6 +20,14 @@ public class MarcaService {
     @Autowired
     private MarcaMapper marcaMapper;
 
+    public MarcaResponseDTO findById(Long id){
+        MarcaResponseDTO marca = marcaMapper.toDto(
+            marcaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Marca não encontrado")));
+
+        return marca;
+    }
+
     public List<MarcaResponseDTO> findAll(){
         List<Marca> marcas = marcaRepository.findAll();
 
@@ -54,9 +62,27 @@ public class MarcaService {
                 .collect(Collectors.toList());
     }
 
-    public MarcaResponseDTO saveMarca(MarcaRequestDTO requestDTO){
+    public MarcaResponseDTO create(MarcaRequestDTO requestDTO){
         Marca marca = marcaMapper.toEntity(requestDTO);
         Marca savedMarca = marcaRepository.save(marca);
         return marcaMapper.toDto(savedMarca);
+    }
+
+    public MarcaResponseDTO update(MarcaRequestDTO dto){
+        Marca marca = marcaRepository.findById(dto.getId())
+        .orElseThrow(() -> new RuntimeException("Marca não encontrada"));
+
+        marca.setNomeMarca(dto.getNomeMarca());
+
+        Marca atualizada = marcaRepository.save(marca);
+
+        return marcaMapper.toDto(atualizada);
+    }
+
+    public void delete(Long id){
+        Marca marca = marcaRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Marca não encontrado"));
+
+        marcaRepository.delete(marca);
     }
 }

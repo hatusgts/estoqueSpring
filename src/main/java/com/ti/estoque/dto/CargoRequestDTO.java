@@ -8,6 +8,8 @@ import lombok.Setter;
 @Getter
 public class CargoRequestDTO {
 
+    private long id;
+    
     @NotBlank(message="Cargo Obrigatório")
     private String nomeCargo;
 }

@@ -7,6 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EscritorioRequestDTO {
+
+    private long id;
+    
     @NotBlank
     private String nomeEscritorio;
 }
