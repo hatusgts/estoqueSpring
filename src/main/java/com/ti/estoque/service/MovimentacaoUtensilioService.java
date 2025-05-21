@@ -1,5 +1,6 @@
 package com.ti.estoque.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,25 +20,20 @@ import com.ti.estoque.repository.UtensilioRepository;
 
 @Service
 public class MovimentacaoUtensilioService {
-
-    private final UsuarioRepository usuarioRepository;
-
-    private final UtensilioRepository utensilioRepository;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private UtensilioRepository utensilioRepository;
 
     @Autowired
     private MovimentacaoUtensilioRepository movimentacaoUtensilioRepository;
     
     @Autowired
     private MovimentacaoUtensilioMapper movimentacaoUtensilioMapper;
-    
-    @SuppressWarnings("unused")
-    MovimentacaoUtensilioService(UtensilioRepository utensilioRepository, UsuarioRepository usuarioRepository) {
-        this.utensilioRepository = utensilioRepository;
-        this.usuarioRepository = usuarioRepository;
-    }
 
-    @SuppressWarnings("unused")
-    private List<MovimentacaoUtensilioResponseDTO> findAll(){
+    public List<MovimentacaoUtensilioResponseDTO> findAll(){
         List<MovimentacaoUtensilio> registros = movimentacaoUtensilioRepository.findAll();
         if (registros.isEmpty()) {
             throw new RuntimeException("Nenhum registro encontrado.");
@@ -60,11 +56,30 @@ public class MovimentacaoUtensilioService {
                 .collect(Collectors.toList());
     }
 
+
+    //Começo dos buscadores
     public MovimentacaoUtensilioResponseDTO findById(Long id){
         MovimentacaoUtensilio moviment = movimentacaoUtensilioRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Movimentacao não encontrado"));
 
         return movimentacaoUtensilioMapper.toDto(moviment);
+    }
+
+    public List<MovimentacaoUtensilioResponseDTO> findByIds(List<Long> ids) {
+        List<MovimentacaoUtensilio> movimentacoesEncontradas = new ArrayList<>();
+
+        for (Long id : ids) {
+            movimentacaoUtensilioRepository.findById(id)
+                .ifPresent(movimentacoesEncontradas::add);
+        }
+
+        if (movimentacoesEncontradas.isEmpty()) {
+            throw new RuntimeException("Nenhuma movimentação encontrada com os IDs fornecidos.");
+        }
+
+        return movimentacoesEncontradas.stream()
+                .map(movimentacaoUtensilioMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public List<MovimentacaoUtensilioResponseDTO> findByUtensilioId(Long id) {
@@ -123,7 +138,8 @@ public class MovimentacaoUtensilioService {
         return converterParaDTO(entidades);
     }
 
-    public List<MovimentacaoUtensilioResponseDTO> findByUtensilioIds(List<Long> ids) {
+    //Buscas de listas, que retornam listas
+    public List<MovimentacaoUtensilioResponseDTO> getUtensilioIds(List<Long> ids) {
         List<MovimentacaoUtensilio> entidades = validarLista(
             movimentacaoUtensilioRepository.findByUtensilioIdIn(ids),
             "Não foram encontrados utensílios com os IDs fornecidos."
@@ -131,39 +147,67 @@ public class MovimentacaoUtensilioService {
         return converterParaDTO(entidades);
     }
 
-    public List<MovimentacaoUtensilioResponseDTO> findByTiposEquipamentos(List<String> tipos) {
-        List<MovimentacaoUtensilio> entidades = validarLista(
-            movimentacaoUtensilioRepository.findByUtensilioTipoEquipamentoDescricaoIgnoreCaseIn(tipos),
-            "Não foram encontrados utensílios com os tipos fornecidos."
-        );
-        return converterParaDTO(entidades);
+    public List<MovimentacaoUtensilioResponseDTO> getByTiposEquipamentos(List<String> tipos) {
+        List<MovimentacaoUtensilio> entidades = new ArrayList<>();
+
+        for (String tipo : tipos) {
+            entidades.addAll(movimentacaoUtensilioRepository
+                .findByUtensilioTipoEquipamentoDescricaoIgnoreCaseLike(tipo));
+        }
+
+        return converterParaDTO(validarLista(entidades, 
+            "Não foram encontrados utensílios com os tipos fornecidos."));
     }
 
-    public List<MovimentacaoUtensilioResponseDTO> findByMarcas(List<String> marcas) {
-        List<MovimentacaoUtensilio> entidades = validarLista(
-            movimentacaoUtensilioRepository.findByUtensilioMarcaNomeMarcaIgnoreCaseIn(marcas),
-            "Não foram encontrados utensílios com as marcas fornecidas."
-        );
-        return converterParaDTO(entidades);
+    public List<MovimentacaoUtensilioResponseDTO> getByMarcas(List<String> marcas) {
+        List<MovimentacaoUtensilio> entidades = new ArrayList<>();
+
+        for (String marca : marcas) {
+            entidades.addAll(movimentacaoUtensilioRepository
+                .findByUtensilioMarcaNomeMarcaIgnoreCaseLike(marca));
+        }
+
+        return converterParaDTO(validarLista(entidades, 
+            "Não foram encontrados utensílios com as marcas fornecidas."));
     }
 
-    public List<MovimentacaoUtensilioResponseDTO> findByModelos(List<String> modelos) {
-        List<MovimentacaoUtensilio> entidades = validarLista(
-            movimentacaoUtensilioRepository.findByUtensilioModeloNomeModeloIgnoreCaseIn(modelos),
-            "Não foram encontrados utensílios com os modelos fornecidos."
-        );
-        return converterParaDTO(entidades);
+    public List<MovimentacaoUtensilioResponseDTO> getByModelos(List<String> modelos) {
+        List<MovimentacaoUtensilio> entidades = new ArrayList<>();
+
+        for (String modelo : modelos) {
+            entidades.addAll(movimentacaoUtensilioRepository
+                .findByUtensilioModeloNomeModeloIgnoreCaseLike(modelo));
+        }
+
+        return converterParaDTO(validarLista(entidades, 
+            "Não foram encontrados utensílios com os modelos fornecidos."));
     }
 
-    public List<MovimentacaoUtensilioResponseDTO> findByTiposMovimentacao(List<TipoMovimentacao> tipos) {
-        List<MovimentacaoUtensilio> entidades = validarLista(
-            movimentacaoUtensilioRepository.findByTipoMovimentacaoIn(tipos),
-            "Não foram encontradas movimentações dos tipos fornecidos."
-        );
-        return converterParaDTO(entidades);
+    public List<MovimentacaoUtensilioResponseDTO> getByTiposMovimentacao(List<TipoMovimentacao> tipos) {
+        List<MovimentacaoUtensilio> entidades = new ArrayList<>();
+
+        for (TipoMovimentacao tipo : tipos) {
+            entidades.addAll(movimentacaoUtensilioRepository
+                .findByTipoMovimentacao(tipo));
+        }
+
+        return converterParaDTO(validarLista(entidades, 
+            "Não foram encontradas movimentações dos tipos fornecidos."));
     }
 
-    public List<MovimentacaoUtensilioResponseDTO> findByUsuarioIds(List<Long> ids) {
+    public List<MovimentacaoUtensilioResponseDTO> getByUsuarios(List<String> nomes) {
+        List<MovimentacaoUtensilio> entidades = new ArrayList<>();
+
+        for (String nome : nomes) {
+            entidades.addAll(movimentacaoUtensilioRepository
+                .findByUsuarioNomeIgnoreCaseLike(nome));
+        }
+
+        return converterParaDTO(validarLista(entidades, 
+            "Não foram encontradas movimentações para os nomes de usuário fornecidos."));
+    }
+
+    public List<MovimentacaoUtensilioResponseDTO> getByUsuarioIds(List<Long> ids) {
         List<MovimentacaoUtensilio> entidades = validarLista(
             movimentacaoUtensilioRepository.findByUsuarioIdIn(ids),
             "Não foram encontradas movimentações para os IDs de usuário fornecidos."
@@ -171,14 +215,7 @@ public class MovimentacaoUtensilioService {
         return converterParaDTO(entidades);
     }
 
-    public List<MovimentacaoUtensilioResponseDTO> findByUsuarios(List<String> nomes) {
-        List<MovimentacaoUtensilio> entidades = validarLista(
-            movimentacaoUtensilioRepository.findByUsuarioNomeIgnoreCaseIn(nomes),
-            "Não foram encontradas movimentações para os nomes de usuário fornecidos."
-        );
-        return converterParaDTO(entidades);
-    }
-
+    //Create, update, delete
     public MovimentacaoUtensilioResponseDTO create(MovimentacaoUtensilioRequestDTO dto) {
         MovimentacaoUtensilio entidade = movimentacaoUtensilioMapper.toEntity(dto);
         MovimentacaoUtensilio salva = movimentacaoUtensilioRepository.save(entidade);
@@ -210,10 +247,21 @@ public class MovimentacaoUtensilioService {
         return movimentacaoUtensilioMapper.toDto(atualizada);
     }
 
-    public void delete(Long id){
+    public void deleteId(Long id){
         MovimentacaoUtensilio moviment = movimentacaoUtensilioRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Movimentação não encontrada"));
 
         movimentacaoUtensilioRepository.delete(moviment);
     }
+
+    public void deleteIds(List<Long> ids) {
+        List<MovimentacaoUtensilio> movimentacoes = movimentacaoUtensilioRepository.findAllById(ids);
+
+        if (movimentacoes.isEmpty()) {
+            throw new RuntimeException("Nenhuma movimentação de utensílio encontrada com os IDs fornecidos.");
+        }
+
+        movimentacaoUtensilioRepository.deleteAll(movimentacoes);
+    }
+
 }

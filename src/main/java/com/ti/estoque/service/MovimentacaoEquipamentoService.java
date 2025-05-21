@@ -1,5 +1,6 @@
 package com.ti.estoque.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,10 +46,26 @@ public class MovimentacaoEquipamentoService {
                 .collect(Collectors.toList());
         }
 
-        public MovimentacaoEquipamentoResponseDTO findId(Long id) {
+        public MovimentacaoEquipamentoResponseDTO findById(Long id) {
         MovimentacaoEquipamento movEquipamento = movimentacao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Não foi encontrado uma movimentação com esse id."));
         return movimentacaoMapper.toDto(movEquipamento);
+        }
+
+        public List<MovimentacaoEquipamentoResponseDTO> findByIds(List<Long> ids) {
+                List<MovimentacaoEquipamento> movimentacoesEncontradas = new ArrayList<>();
+
+                for (Long id : ids) {
+                        movimentacao.findById(id).ifPresent(movimentacoesEncontradas::add);
+                }
+
+                if (movimentacoesEncontradas.isEmpty()) {
+                        throw new RuntimeException("Nenhuma movimentação encontrada com os IDs fornecidos.");
+                }
+
+                return movimentacoesEncontradas.stream()
+                        .map(movimentacaoMapper::toDto)
+                        .collect(Collectors.toList());
         }
 
         public List<MovimentacaoEquipamentoResponseDTO> findByNumPatrimonio(String numPatrimonio) {
@@ -234,5 +251,15 @@ public class MovimentacaoEquipamentoService {
         .orElseThrow(() -> new RuntimeException("Movimentação não encontrada"));
 
         movimentacao.delete(moviment);
+        }
+
+        public void deleteIds(List<Long> ids) {
+                List<MovimentacaoEquipamento> movimentacoes = movimentacao.findAllById(ids);
+
+                if (movimentacoes.isEmpty()) {
+                        throw new RuntimeException("Nenhuma movimentação encontrada com os IDs fornecidos.");
+                }
+
+                movimentacao.deleteAll(movimentacoes);
         }
 }

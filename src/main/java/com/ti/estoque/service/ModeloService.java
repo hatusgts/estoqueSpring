@@ -81,4 +81,14 @@ public class ModeloService {
         
         modeloRepository.delete(modelo);
     }
+
+    public void deleteIds(List<Long> ids) {
+        List<Modelo> modelos = modeloRepository.findAllById(ids);
+
+        if (modelos.isEmpty()) {
+            throw new RuntimeException("Nenhum modelo encontrado com os IDs fornecidos.");
+        }
+
+        modeloRepository.deleteAll(modelos);
+    }
 }

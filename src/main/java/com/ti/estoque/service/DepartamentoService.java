@@ -2,6 +2,7 @@ package com.ti.estoque.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class DepartamentoService {
         return lista;
     }
 
-    public List<DepartamentoResponseDTO> findID(List<Long> ids) {
+    public List<DepartamentoResponseDTO> findAllByIds(List<Long> ids) {
         List<Departamento> departamentos = departamentoRepository.findByIdIn(ids);
         if (departamentos.isEmpty()) {
             throw new RuntimeException("Nenhum departamento encontrado com os IDs fornecidos.");
@@ -49,16 +50,24 @@ public class DepartamentoService {
         return lista;
     }
 
-    public List<DepartamentoResponseDTO> findDepartamentos(List<String> departamento) {
-        List<Departamento> departamentos = departamentoRepository.findByNomeDepartamentoIgnoreCaseIn(departamento);
-        if (departamentos.isEmpty()) {
+    public List<DepartamentoResponseDTO> findDepartamentos(List<String> nomesParciais) {
+        List<Departamento> encontrados = new ArrayList<>();
+
+        for (String nome : nomesParciais) {
+            List<Departamento> encontradosPorNome = departamentoRepository.findByNomeDepartamentoIgnoreCaseContaining(nome);
+            encontrados.addAll(encontradosPorNome);
+        }
+
+        if (encontrados.isEmpty()) {
             throw new RuntimeException("Nenhum departamento encontrado com os nomes fornecidos.");
         }
-        List<DepartamentoResponseDTO> lista = new ArrayList<>();
-        for(Departamento i : departamentos){
-            lista.add(DepartamentoMapper.toDto(i));
-        }
-        return lista;
+
+        // Evita duplicatas caso mais de um nome parcial retorne o mesmo registro
+        List<Departamento> distintos = encontrados.stream().distinct().toList();
+
+        return distintos.stream()
+                .map(DepartamentoMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public DepartamentoResponseDTO create(DepartamentoRequestDTO item){
@@ -82,5 +91,14 @@ public class DepartamentoService {
         .orElseThrow(()-> new RuntimeException("Departamento Não encontrado"));
 
         departamentoRepository.delete(dp);
+    }
+    public void deleteIds(List<Long> ids) {
+        List<Departamento> departamentos = departamentoRepository.findByIdIn(ids);
+
+        if (departamentos.isEmpty()) {
+            throw new RuntimeException("Nenhum cargo encontrado para os IDs fornecidos.");
+        }
+
+        departamentoRepository.deleteAll(departamentos);
     }
 }

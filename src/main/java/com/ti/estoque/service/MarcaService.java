@@ -1,5 +1,6 @@
 package com.ti.estoque.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,24 +41,32 @@ public class MarcaService {
                 .collect(Collectors.toList());
     }
 
-    public List<MarcaResponseDTO> findByIdIn(List<Long> id){
-        List<Marca> marcas = marcaRepository.findByIdIn(id);
+    public List<MarcaResponseDTO> findByIdIn(List<Long> ids) {
+        List<Marca> marcas = marcaRepository.findAllById(ids);
 
-        if(marcas.isEmpty()) throw new RuntimeException("Não foram encontradas Marcas nesses ID's");
+        if (marcas.isEmpty()) {
+            throw new RuntimeException("Não foram encontradas marcas com os IDs fornecidos.");
+        }
 
         return marcas.stream()
                 .map(marcaMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<MarcaResponseDTO> findByNomeMarca(List<String> marca){
-        List<Marca> marcas = marcaRepository.findByNomeMarcaIgnoreCaseIn(marca);
+    public List<MarcaResponseDTO> findByNomeMarca(List<String> nomes) {
+        List<Marca> marcasEncontradas = new ArrayList<>();
 
-        if(marcas.isEmpty()) {
-            throw new RuntimeException("Marcas não encontradas");
+        for (String nome : nomes) {
+            List<Marca> resultados = marcaRepository.findByNomeMarcaContainingIgnoreCase(nome);
+            marcasEncontradas.addAll(resultados);
         }
 
-        return marcas.stream()
+        if (marcasEncontradas.isEmpty()) {
+            throw new RuntimeException("Nenhuma marca semelhante encontrada.");
+        }
+
+        return marcasEncontradas.stream()
+                .distinct()
                 .map(marcaMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -79,10 +88,21 @@ public class MarcaService {
         return marcaMapper.toDto(atualizada);
     }
 
-    public void delete(Long id){
+    public void deleteId(Long id){
         Marca marca = marcaRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Marca não encontrado"));
 
         marcaRepository.delete(marca);
     }
+
+    public void deleteIds(List<Long> ids) {
+        List<Marca> marcas = marcaRepository.findAllById(ids);
+
+        if (marcas.isEmpty()) {
+            throw new RuntimeException("Nenhuma marca encontrada com os IDs fornecidos.");
+        }
+
+        marcaRepository.deleteAll(marcas);
+    }
+
 }

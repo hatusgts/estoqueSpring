@@ -13,4 +13,5 @@ public interface MarcaRepository extends JpaRepository<Marca, Long> {
     List<Marca> findByIdIn(List<Long> id);
 
     List<Marca> findByNomeMarcaIgnoreCaseIn(List<String> marca);
+    List<Marca> findByNomeMarcaContainingIgnoreCase(String nomeMarca);
 }

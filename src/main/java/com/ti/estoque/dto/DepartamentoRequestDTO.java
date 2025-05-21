@@ -12,8 +12,8 @@ import lombok.Setter;
 @Setter
 public class DepartamentoRequestDTO {
 
-    @NotNull(message="Id não pode ser nulo para atualização", groups=OnUpdate.class)
-    private long id;
+    @NotNull(message = "O ID é obrigatório para atualização", groups = OnUpdate.class)
+    private Long id;
     
     @NotBlank(message="Nome do departamento não pode ser nulo",groups={OnUpdate.class,OnCreate.class})
     private String nomeDepartamento;

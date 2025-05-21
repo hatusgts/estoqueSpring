@@ -96,4 +96,14 @@ public class CargoService {
 
         cargoRepository.delete(cargo);
     }
+
+    public void deleteIds(List<Long> ids) {
+        List<Cargo> cargos = cargoRepository.findAllById(ids);
+
+        if (cargos.isEmpty()) {
+            throw new RuntimeException("Nenhum cargo encontrado para os IDs fornecidos.");
+        }
+
+        cargoRepository.deleteAll(cargos);
+    }
 }

@@ -1,5 +1,6 @@
 package com.ti.estoque.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,12 +48,21 @@ public class EscritorioService {
                 .collect(Collectors.toList());
     }
 
-    public List<EscritorioResponseDTO> findByNome(List<String> escritorio){
-        List<Escritorio> nomeEscritorio = escritorioRepository.findByNomeEscritorioIgnoreCaseIn(escritorio);
+    public List<EscritorioResponseDTO> findByNome(List<String> nomes) {
+        List<Escritorio> encontrados = new ArrayList<>();
 
-        if(nomeEscritorio.isEmpty()) throw new RuntimeException("Não foram encontrados escritorios com esse nome");
+        for (String nome : nomes) {
+            List<Escritorio> resultados = escritorioRepository
+                .findByNomeEscritorioContainingIgnoreCase(nome);
+            encontrados.addAll(resultados);
+        }
 
-        return nomeEscritorio.stream()
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum escritório encontrado com nomes semelhantes aos fornecidos.");
+        }
+
+        return encontrados.stream()
+                .distinct()
                 .map(escritorioMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -80,4 +90,15 @@ public class EscritorioService {
 
         escritorioRepository.delete(escritorio);
     }
+
+    public void deleteByIds(List<Long> ids) {
+        List<Escritorio> escritorios = escritorioRepository.findAllById(ids);
+
+        if (escritorios.isEmpty()) {
+            throw new RuntimeException("Nenhum escritório encontrado com os IDs fornecidos.");
+        }
+
+        escritorioRepository.deleteAll(escritorios);
+    }
+
 }

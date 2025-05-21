@@ -1,9 +1,11 @@
 package com.ti.estoque.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ti.estoque.dto.EquipamentoRequestDTO;
@@ -17,28 +19,16 @@ import com.ti.estoque.repository.TipoEquipamentoRepository;
 
 @Service
 public class EquipamentoService {
-
-    private final ModeloRepository modeloRepository;
-
-    private final TipoEquipamentoRepository tipoEquipamentoRepository;
-
-    private final EquipamentoRepository equipamentoRepository;
-
-    private final EquipamentoMapper equipamentoMapper;
-
-    private final MarcaRepository marcaRepository;
-
-    public EquipamentoService(EquipamentoRepository equipamentoRepository,
-    EquipamentoMapper equipamentoMapper,
-    TipoEquipamentoRepository tipoEquipamentoRepository,
-    MarcaRepository marcaRepository
-    , ModeloRepository modeloRepository){
-        this.equipamentoRepository = equipamentoRepository;
-        this.equipamentoMapper = equipamentoMapper;
-        this.tipoEquipamentoRepository = tipoEquipamentoRepository;
-        this.marcaRepository = marcaRepository;
-        this.modeloRepository = modeloRepository;
-    }
+    @Autowired
+    private ModeloRepository modeloRepository;
+    @Autowired
+    private TipoEquipamentoRepository tipoEquipamentoRepository;
+    @Autowired
+    private EquipamentoRepository equipamentoRepository;
+    @Autowired
+    private EquipamentoMapper equipamentoMapper;
+    @Autowired
+    private MarcaRepository marcaRepository;
 
     public EquipamentoResponseDTO findById(Long id){
         Equipamento equipamento = equipamentoRepository.findById(id)
@@ -47,6 +37,17 @@ public class EquipamentoService {
         return equipamentoMapper.toDto(equipamento);
     }
 
+    public List<EquipamentoResponseDTO> findByIds(List<Long> ids) {
+        List<Equipamento> equipamentos = equipamentoRepository.findAllById(ids);
+
+        if (equipamentos.isEmpty()) {
+            throw new RuntimeException("Nenhum equipamento encontrado com os IDs fornecidos.");
+        }
+
+        return equipamentos.stream()
+                .map(equipamentoMapper::toDto)
+                .collect(Collectors.toList());
+    }
     public List<EquipamentoResponseDTO> findAll() {
         List<Equipamento> equipamentos = equipamentoRepository.findAll();
         if (equipamentos.isEmpty()) throw new RuntimeException("Nenhum equipamento encontrado.");
@@ -55,42 +56,97 @@ public class EquipamentoService {
                 .collect(Collectors.toList());
     }
 
-    public List<EquipamentoResponseDTO> findByPatrimonio(List<String> patrimonio) {
-        List<Equipamento> equipamentos = equipamentoRepository.findByNumeroPatrimonioIgnoreCaseIn(patrimonio);
-        if (equipamentos.isEmpty()) throw new RuntimeException("Nenhum equipamento encontrado com os patrimônios fornecidos.");
-        return equipamentos.stream()
+    public List<EquipamentoResponseDTO> findByPatrimonio(List<String> patrimonios) {
+        List<Equipamento> encontrados = new ArrayList<>();
+
+        for (String patrimonio : patrimonios) {
+            List<Equipamento> resultados = equipamentoRepository
+                .findByNumeroPatrimonioContainingIgnoreCase(patrimonio);
+            encontrados.addAll(resultados);
+        }
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum equipamento encontrado com os patrimônios semelhantes fornecidos.");
+        }
+
+        return encontrados.stream()
+                .distinct()
                 .map(equipamentoMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<EquipamentoResponseDTO> findByDescricao(List<String> descricao) {
-        List<Equipamento> equipamentos = equipamentoRepository.findByTipoEquipamentoDescricaoIgnoreCaseIn(descricao);
-        if (equipamentos.isEmpty()) throw new RuntimeException("Nenhum equipamento encontrado com as descrições fornecidas.");
-        return equipamentos.stream()
+    public List<EquipamentoResponseDTO> findByDescricao(List<String> descricoes) {
+        List<Equipamento> encontrados = new ArrayList<>();
+
+        for (String descricao : descricoes) {
+            List<Equipamento> resultados = equipamentoRepository
+                .findByTipoEquipamentoDescricaoContainingIgnoreCase(descricao);
+            encontrados.addAll(resultados);
+        }
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum equipamento encontrado com as descrições semelhantes fornecidas.");
+        }
+
+        return encontrados.stream()
+                .distinct()
                 .map(equipamentoMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<EquipamentoResponseDTO> findByMarca(List<String> marca) {
-        List<Equipamento> equipamentos = equipamentoRepository.findByMarcaNomeMarcaIgnoreCaseIn(marca);
-        if (equipamentos.isEmpty()) throw new RuntimeException("Nenhum equipamento encontrado com as marcas fornecidas.");
-        return equipamentos.stream()
+    public List<EquipamentoResponseDTO> findByMarca(List<String> marcas) {
+        List<Equipamento> encontrados = new ArrayList<>();
+
+        for (String marca : marcas) {
+            List<Equipamento> resultados = equipamentoRepository
+                .findByMarcaNomeMarcaContainingIgnoreCase(marca);
+            encontrados.addAll(resultados);
+        }
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum equipamento encontrado com marcas semelhantes às fornecidas.");
+        }
+
+        return encontrados.stream()
+                .distinct()
                 .map(equipamentoMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<EquipamentoResponseDTO> findByModelo(List<String> modelo) {
-        List<Equipamento> equipamentos = equipamentoRepository.findByModeloNomeModeloIgnoreCaseIn(modelo);
-        if (equipamentos.isEmpty()) throw new RuntimeException("Nenhum equipamento encontrado com os modelos fornecidos.");
-        return equipamentos.stream()
+    public List<EquipamentoResponseDTO> findByModelo(List<String> modelos) {
+        List<Equipamento> encontrados = new ArrayList<>();
+
+        for (String modelo : modelos) {
+            List<Equipamento> resultados = equipamentoRepository
+                .findByModeloNomeModeloContainingIgnoreCase(modelo);
+            encontrados.addAll(resultados);
+        }
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum equipamento encontrado com modelos semelhantes aos fornecidos.");
+        }
+
+        return encontrados.stream()
+                .distinct()
                 .map(equipamentoMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<EquipamentoResponseDTO> findByServiceTag(List<String> serTag) {
-        List<Equipamento> equipamentos = equipamentoRepository.findByServiceTagIgnoreCaseIn(serTag);
-        if (equipamentos.isEmpty()) throw new RuntimeException("Nenhum equipamento encontrado com as service tags fornecidas.");
-        return equipamentos.stream()
+    public List<EquipamentoResponseDTO> findByServiceTag(List<String> serviceTags) {
+        List<Equipamento> encontrados = new ArrayList<>();
+
+        for (String tag : serviceTags) {
+            List<Equipamento> resultados = equipamentoRepository
+                .findByServiceTagContainingIgnoreCase(tag);
+            encontrados.addAll(resultados);
+        }
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum equipamento encontrado com service tags semelhantes às fornecidas.");
+        }
+
+        return encontrados.stream()
+                .distinct()
                 .map(equipamentoMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -165,5 +221,16 @@ public class EquipamentoService {
 
         equipamentoRepository.delete(equipamento);
     }
+
+    public void deleteByIds(List<Long> ids) {
+        List<Equipamento> equipamentos = equipamentoRepository.findAllById(ids);
+
+        if (equipamentos.isEmpty()) {
+            throw new RuntimeException("Nenhum equipamento encontrado com os IDs fornecidos.");
+        }
+
+        equipamentoRepository.deleteAll(equipamentos);
+    }
+
 
 }

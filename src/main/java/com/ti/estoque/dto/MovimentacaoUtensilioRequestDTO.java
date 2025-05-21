@@ -2,6 +2,8 @@ package com.ti.estoque.dto;
 
 import java.time.LocalDate;
 
+import com.ti.estoque.dto.validation.OnCreate;
+import com.ti.estoque.dto.validation.OnUpdate;
 import com.ti.estoque.enums.TipoMovimentacao;
 
 import jakarta.validation.constraints.Min;
@@ -14,18 +16,20 @@ import lombok.Setter;
 @Setter
 public class MovimentacaoUtensilioRequestDTO {
 
-    private long id;
+    @NotNull(message="Id não pode ser nulo ao Editar", groups=OnUpdate.class)
+    private Long id;
 
-    @NotNull
+    @NotNull(message="IdUtensilio não pode ser nulo", groups={OnUpdate.class,OnCreate.class})
     private Long idUtensilio;
 
     @Min(1)
-    private int quantidade;
+    @NotNull(message="Quantidade não pode ser nulo", groups={OnUpdate.class,OnCreate.class})
+    private Integer quantidade;
 
-    @NotBlank(message = "O tipo de movimentação é obrigatório")
+    @NotBlank(message = "O tipo de movimentação é obrigatório", groups={OnUpdate.class,OnCreate.class})
     private TipoMovimentacao tipoMovimentacao;
 
-    @NotNull
+    @NotNull(message = "IdUsuario é obrigatório", groups={OnUpdate.class,OnCreate.class})
     private Long idUsuario;
 
     private LocalDate dataMovimentacao;
