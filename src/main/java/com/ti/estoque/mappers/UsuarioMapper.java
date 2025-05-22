@@ -36,6 +36,10 @@ public class UsuarioMapper {
 
     public Usuario toEntity(UsuarioRequestDTO dto){
 
+        if (dto.getIdCargo() == null || dto.getIdDepartamento() == null || dto.getIdEscritorio() == null) {
+            throw new IllegalArgumentException("Campos obrigatórios estão faltando no DTO.");
+        }
+
         Usuario entity = new Usuario();
 
         Cargo cargo = cargoRepository.findById(dto.getIdCargo())
@@ -44,7 +48,7 @@ public class UsuarioMapper {
         Departamento departamento = departamentoRepository.findById(dto.getIdDepartamento())
         .orElseThrow(() -> new RuntimeException("Departamento não encontrado"));
 
-        Escritorio escritorio = escritorioRepository.findById(dto.getIdCargo())
+        Escritorio escritorio = escritorioRepository.findById(dto.getIdEscritorio())
         .orElseThrow(() -> new RuntimeException("Escritorio não encontrado"));
 
         entity.setNome(dto.getNome());

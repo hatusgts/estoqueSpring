@@ -35,7 +35,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping("/create")
+    @PostMapping("/cadastro")
     public ResponseEntity<UsuarioResponseDTO> create(@Validated(OnCreate.class)@RequestBody UsuarioRequestDTO dto) {
         return ResponseEntity.ok(usuarioService.create(dto));
     }

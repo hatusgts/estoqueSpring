@@ -8,6 +8,7 @@ import com.ti.estoque.dto.validation.OnCreate;
 import com.ti.estoque.dto.validation.OnUpdate;
 import com.ti.estoque.enums.ModeloTrabalho;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -27,20 +28,25 @@ public class UsuarioRequestDTO {
     private String cpf;
 
     @NotBlank(message="Email não pode ser nulo", groups={OnUpdate.class, OnCreate.class})
+    @Email
     private String email;
 
-    @NotNull
+    @NotNull(message="Usuario é admin?",groups=OnCreate.class)
     private boolean isAdmin;
 
     @NotBlank(message="Senha não pode ser nulo", groups={OnCreate.class})
     private String senha;
 
+    @NotNull(message="id do Cargo não pode ser null")
     private Long idCargo;
 
+    @NotNull(message="id do Departamento não pode ser null")
     private Long idDepartamento;
 
+    @NotNull(message="Modelo trabalho não pode ser null")
     private ModeloTrabalho modeloTrabalho;
 
+    @NotNull(message="id Escritorio não pode ser null")
     private Long idEscritorio;
 
     private LocalDate dataCadastro;

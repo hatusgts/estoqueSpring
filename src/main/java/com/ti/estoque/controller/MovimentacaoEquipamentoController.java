@@ -4,29 +4,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ti.estoque.dto.MovimentacaoEquipamentoRequestDTO;
 import com.ti.estoque.dto.MovimentacaoEquipamentoResponseDTO;
+import com.ti.estoque.enums.TipoMovimentacao;
 import com.ti.estoque.service.MovimentacaoEquipamentoService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import com.ti.estoque.dto.validation.OnCreate;
-import com.ti.estoque.dto.validation.OnUpdate;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.ti.estoque.enums.TipoMovimentacao;
 
 
 @RestController
@@ -35,13 +29,18 @@ public class MovimentacaoEquipamentoController {
     @Autowired
     private MovimentacaoEquipamentoService movimentacaoService;
 
-    @PostMapping("/cadastro")
-    public ResponseEntity<MovimentacaoEquipamentoResponseDTO> create(@Validated(OnCreate.class)@RequestBody MovimentacaoEquipamentoRequestDTO movimentacao){
-        return ResponseEntity.ok(movimentacaoService.create(movimentacao));
+    // @PostMapping("/new")
+    // public ResponseEntity<MovimentacaoEquipamentoResponseDTO> create(@Validated(OnCreate.class) @RequestBody MovimentacaoEquipamentoRequestDTO movimentacao){
+    //     return ResponseEntity.ok(movimentacaoService.create(movimentacao));
+    // }
+
+    @PostMapping("/new")
+    public ResponseEntity<?> createMovimentacao(@RequestBody MovimentacaoEquipamentoRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(requestDTO);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<MovimentacaoEquipamentoResponseDTO> update(@Validated(OnUpdate.class)@RequestBody MovimentacaoEquipamentoRequestDTO dto) {        
+    public ResponseEntity<MovimentacaoEquipamentoResponseDTO> update(@RequestBody MovimentacaoEquipamentoRequestDTO dto) {        
         return ResponseEntity.ok(movimentacaoService.update(dto));
     }
 
