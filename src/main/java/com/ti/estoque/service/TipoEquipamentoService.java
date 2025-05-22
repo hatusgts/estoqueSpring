@@ -1,5 +1,6 @@
 package com.ti.estoque.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,12 @@ public class TipoEquipamentoService {
                 .map(tipoEquipamentoMapper::toDto)
                 .collect(Collectors.toList());
     }
+    
+    public TipoEquipamentoResponseDTO findById(Long id){
+        TipoEquipamento entidade = tipoEquipamentoRepository.findById(id)
+            .orElseThrow(()-> new RuntimeException("Tipo não encontrado"));
+        return tipoEquipamentoMapper.toDto(entidade);
+    }
 
     public List<TipoEquipamentoResponseDTO> getIds(List<Long> ids){
         List<TipoEquipamento> tipos = tipoEquipamentoRepository.findByIdIn(ids);
@@ -43,13 +50,7 @@ public class TipoEquipamentoService {
         return converterParaDTO(tipos);
     }
 
-    public TipoEquipamentoResponseDTO findById(Long id){
-        TipoEquipamento entidade = tipoEquipamentoRepository.findById(id)
-            .orElseThrow(()-> new RuntimeException("Tipo não encontrado"));
-        return tipoEquipamentoMapper.toDto(entidade);
-    }
-
-    public List<TipoEquipamentoResponseDTO> findTipo(String tipo){
+    public List<TipoEquipamentoResponseDTO> findDescricao(String tipo){
         List<TipoEquipamento> tipos = tipoEquipamentoRepository.findByDescricaoIgnoreCaseLike(tipo);
         if (tipos.isEmpty()) {
             throw new RuntimeException("Nenhum Tipo encontrado semelhante a: " + tipo);
@@ -57,14 +58,23 @@ public class TipoEquipamentoService {
         return converterParaDTO(tipos);
     }
 
-    public List<TipoEquipamentoResponseDTO> getTipos(List<String> tipo){
-        List<TipoEquipamento> tipos = tipoEquipamentoRepository.findByDescricaoIgnoreCaseIn(tipo);
-        if (tipos.isEmpty()) {
-            throw new RuntimeException("Nenhum Tipo encontrado semelhante a: " + tipo);
+    public List<TipoEquipamentoResponseDTO> getDescricao(List<String> termos) {
+        List<TipoEquipamento> encontrados = new ArrayList<>();
+
+        for (String termo : termos) {
+            List<TipoEquipamento> resultados = tipoEquipamentoRepository
+                .findByDescricaoIgnoreCaseLike("%" + termo + "%");
+
+            encontrados.addAll(resultados);
         }
-        return converterParaDTO(tipos);
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum Tipo encontrado semelhante aos termos: " + termos);
+        }
+
+        return converterParaDTO(encontrados);
     }
-    
+
     public TipoEquipamentoResponseDTO create(TipoEquipamentoRequestDTO dto) {
         TipoEquipamento entidade = tipoEquipamentoMapper.toEntity(dto);
         TipoEquipamento salvo = tipoEquipamentoRepository.save(entidade);
@@ -85,10 +95,20 @@ public class TipoEquipamentoService {
         return tipoEquipamentoMapper.toDto(atualizado);
     }
 
-    public void delete(Long id){
+    public void deleteId(Long id){
         TipoEquipamento tipo = tipoEquipamentoRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Tipo não encontrado"));
-        
+
         tipoEquipamentoRepository.delete(tipo);
+    }
+
+    public void deleteIds(List<Long> ids) {
+        List<TipoEquipamento> tipos = tipoEquipamentoRepository.findAllById(ids);
+
+        if (tipos.isEmpty()) {
+            throw new RuntimeException("Nenhum tipo encontrado com os IDs fornecidos: " + ids);
+        }
+
+        tipoEquipamentoRepository.deleteAll(tipos);
     }
 }

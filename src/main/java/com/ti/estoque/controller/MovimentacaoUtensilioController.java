@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +50,7 @@ public class MovimentacaoUtensilioController {
         return ResponseEntity.ok(movimentacaoService.findById(id));
     }
 
-    @GetMapping("/find-ids")
+    @GetMapping("/find-ids/")
     public ResponseEntity<List<MovimentacaoUtensilioResponseDTO>> getByIds(@RequestParam(name="ids") List<Long> ids) {
         return ResponseEntity.ok(movimentacaoService.findByIds(ids));
     }
@@ -68,5 +69,36 @@ public class MovimentacaoUtensilioController {
     public ResponseEntity<List<MovimentacaoUtensilioResponseDTO>> getByMarcas(@RequestParam(name="marcas") List<String> marcas) {
         return ResponseEntity.ok(movimentacaoService.getByMarcas(marcas));
     }
-    
+
+    @GetMapping("/find-modelos")
+    public ResponseEntity<List<MovimentacaoUtensilioResponseDTO>> getByModelo(@RequestParam(name="modelos") List<String> modelo) {
+        return ResponseEntity.ok(movimentacaoService.getByModelos(modelo));
+    }
+
+    @GetMapping("/find-tipoMovimentacao")
+    public ResponseEntity<List<MovimentacaoUtensilioResponseDTO>> getByTipo(@RequestParam(name="tipos") List<String> tipos) {
+        return ResponseEntity.ok(movimentacaoService.getByTiposMovimentacaoFromStrings(tipos));
+    }
+
+    @GetMapping("/find-usuarios")
+    public ResponseEntity<List<MovimentacaoUtensilioResponseDTO>> getByUsers(@RequestParam(name="nomes") List<String> nomes) {
+        return ResponseEntity.ok(movimentacaoService.getByUsuarios(nomes));
+    }
+
+    @GetMapping("/find-idUsuarios")
+    public ResponseEntity<List<MovimentacaoUtensilioResponseDTO>> getByUsersId(@RequestParam(name="ids") List<Long> ids) {
+        return ResponseEntity.ok(movimentacaoService.getByUsuarioIds(ids));
+    }
+
+    @DeleteMapping("/delete-id/{id}")
+    public ResponseEntity<Void> deleteId(@PathVariable Long id){
+        movimentacaoService.deleteId(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/delete-ids/")
+    public ResponseEntity<Void> deleteIds(@RequestParam(name="ids") List<Long> ids){
+        movimentacaoService.deleteIds(ids);
+        return ResponseEntity.noContent().build();
+    }
 }

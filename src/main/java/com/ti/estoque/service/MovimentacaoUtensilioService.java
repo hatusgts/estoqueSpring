@@ -183,6 +183,7 @@ public class MovimentacaoUtensilioService {
             "Não foram encontrados utensílios com os modelos fornecidos."));
     }
 
+    //Recebe enuns, e busca na entidade
     public List<MovimentacaoUtensilioResponseDTO> getByTiposMovimentacao(List<TipoMovimentacao> tipos) {
         List<MovimentacaoUtensilio> entidades = new ArrayList<>();
 
@@ -193,6 +194,21 @@ public class MovimentacaoUtensilioService {
 
         return converterParaDTO(validarLista(entidades, 
             "Não foram encontradas movimentações dos tipos fornecidos."));
+    }
+
+    //Recebe String, faz a conversão e passa pelo metodo que busca por enuns
+    public List<MovimentacaoUtensilioResponseDTO> getByTiposMovimentacaoFromStrings(List<String> tiposStr) {
+        List<TipoMovimentacao> tiposEnum = new ArrayList<>();
+
+        for (String tipoStr : tiposStr) {
+            try {
+                tiposEnum.add(TipoMovimentacao.valueOf(tipoStr.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Tipo de movimentação inválido: " + tipoStr);
+            }
+        }
+
+        return getByTiposMovimentacao(tiposEnum);
     }
 
     public List<MovimentacaoUtensilioResponseDTO> getByUsuarios(List<String> nomes) {
@@ -206,6 +222,7 @@ public class MovimentacaoUtensilioService {
         return converterParaDTO(validarLista(entidades, 
             "Não foram encontradas movimentações para os nomes de usuário fornecidos."));
     }
+
 
     public List<MovimentacaoUtensilioResponseDTO> getByUsuarioIds(List<Long> ids) {
         List<MovimentacaoUtensilio> entidades = validarLista(

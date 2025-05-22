@@ -20,12 +20,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> findByCpf(String cpf);
     List<Usuario> findByEmailIgnoreCaseLike(String email);
     List<Usuario> findByIsAdmin(boolean isAdmin);
-    List<Usuario> findByIsAtivo(boolean ativo);
+    List<Usuario> findAllByIsAdmin(boolean isAdmin);
 
     //Buscas por mais de um atributo, que retornam listas
 
-    List<Usuario> findByCargoNomeCargoIgnoreCaseIn(List<String> cargo);
-    List<Usuario> findByDepartamentoNomeDepartamentoIgnoreCaseIn(List<String> departamento);
-    List<Usuario> findByModeloIn(List <ModeloTrabalho> modelo);
-    List<Usuario> findByEscritorioNomeEscritorioIgnoreCaseIn(List<String> escritorio);
+    List<Usuario> findByCargoNomeCargoIgnoreCaseLike(String nomeCargo);
+    List<Usuario> findByDepartamentoNomeDepartamentoIgnoreCaseLike(String nomeDepartamento);
+    List<Usuario> findByModeloIn(List<ModeloTrabalho> modelos);
+    List<Usuario> findByEscritorioNomeEscritorioIgnoreCaseLike(String escritorio);
 }

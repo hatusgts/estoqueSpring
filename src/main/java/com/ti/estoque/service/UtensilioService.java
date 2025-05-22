@@ -1,5 +1,6 @@
 package com.ti.estoque.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,24 +77,60 @@ public class UtensilioService {
     }
 
     public List<UtensilioResponseDTO> getTipoEquipamentoDescricoes(List<String> descricoes) {
-        List<Utensilio> registros = utensilioRepository.findByTipoEquipamentoDescricaoIgnoreCaseIn(descricoes);
-        if (registros.isEmpty()) throw new RuntimeException("Nenhum utensílio encontrado com essas descrições de tipo de equipamento.");
-        return converterParaDTO(registros);
+        List<Utensilio> registros = new ArrayList<>();
+
+        for (String descricao : descricoes) {
+            registros.addAll(utensilioRepository.findByTipoEquipamentoDescricaoIgnoreCaseLike("%" + descricao + "%"));
+        }
+
+        if (registros.isEmpty()) {
+            throw new RuntimeException("Nenhum utensílio encontrado com essas descrições de tipo de equipamento.");
+        }
+
+        // Remove duplicados
+        List<Utensilio> registrosUnicos = registros.stream()
+            .distinct()
+            .collect(Collectors.toList());
+
+        return converterParaDTO(registrosUnicos);
     }
 
     public List<UtensilioResponseDTO> getMarcas(List<String> marcas) {
-        List<Utensilio> registros = utensilioRepository.findByMarcaNomeMarcaIgnoreCaseIn(marcas);
-        if (registros.isEmpty()) throw new RuntimeException("Nenhum utensílio encontrado com essas marcas.");
-        return converterParaDTO(registros);
+        List<Utensilio> registros = new ArrayList<>();
+
+        for (String marca : marcas) {
+            registros.addAll(utensilioRepository.findByMarcaNomeMarcaIgnoreCaseLike("%" + marca + "%"));
+        }
+
+        if (registros.isEmpty()) {
+            throw new RuntimeException("Nenhum utensílio encontrado com essas marcas.");
+        }
+
+        List<Utensilio> registrosUnicos = registros.stream()
+            .distinct()
+            .collect(Collectors.toList());
+
+        return converterParaDTO(registrosUnicos);
     }
 
     public List<UtensilioResponseDTO> getModelos(List<String> modelos) {
-        List<Utensilio> registros = utensilioRepository.findByModeloNomeModeloIgnoreCaseIn(modelos);
-        if (registros.isEmpty()) throw new RuntimeException("Nenhum utensílio encontrado com esses modelos.");
-        return converterParaDTO(registros);
+        List<Utensilio> registros = new ArrayList<>();
+
+        for (String modelo : modelos) {
+            registros.addAll(utensilioRepository.findByModeloNomeModeloIgnoreCaseLike("%" + modelo + "%"));
+        }
+
+        if (registros.isEmpty()) {
+            throw new RuntimeException("Nenhum utensílio encontrado com esses modelos.");
+        }
+
+        List<Utensilio> registrosUnicos = registros.stream()
+            .distinct()
+            .collect(Collectors.toList());
+
+        return converterParaDTO(registrosUnicos);
     }
 
-    
     public UtensilioResponseDTO findById(Long id) {
         Utensilio utensilio = utensilioRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Utensílio não encontrado com o ID: " + id));
@@ -108,6 +145,8 @@ public class UtensilioService {
         return converterParaDTO(registros);
     }
 
+
+    //Create, update, delete
     public UtensilioResponseDTO create(UtensilioRequestDTO dto) {
         Utensilio entidade = utensilioMapper.toEntity(dto);
         Utensilio salvo = utensilioRepository.save(entidade);
@@ -141,11 +180,20 @@ public class UtensilioService {
         return utensilioMapper.toDto(atualizado);
     }
 
-    public void delete(Long id){
+    public void deleteId(Long id){
         Utensilio item = utensilioRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Utensilio não encontrado"));
 
         utensilioRepository.delete(item);
     }
 
+    public void deleteIds(List<Long> ids) {
+        List<Utensilio> itens = utensilioRepository.findAllById(ids);
+
+        if (itens.isEmpty()) {
+            throw new RuntimeException("Nenhum utensílio encontrado com os IDs fornecidos.");
+        }
+
+        utensilioRepository.deleteAll(itens);
+    }
 }

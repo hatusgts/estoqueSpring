@@ -1,6 +1,9 @@
 package com.ti.estoque.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +63,18 @@ public class UsuarioService {
         return usuarioMapper.toDto(usuario);
     }
 
+    public List<UsuarioResponseDTO> findByIds(List<Long> ids) {
+        List<Usuario> usuarios = usuarioRepository.findAllById(ids);
+
+        if (usuarios.isEmpty()) {
+            throw new RuntimeException("Nenhum usuário encontrado com os IDs fornecidos: " + ids);
+        }
+
+        return usuarios.stream()
+            .map(usuarioMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
     // Nome
     public List<UsuarioResponseDTO> nameStarting(String nome) {
         List<Usuario> usuarios = usuarioRepository.findByNomeIgnoreCaseStartingWith(nome);
@@ -69,74 +84,108 @@ public class UsuarioService {
         return converterParaDTO(usuarios);
     }
 
-    public List<UsuarioResponseDTO> nameIn(String nome) {
-        List<Usuario> usuarios = usuarioRepository.findByNomeIgnoreCaseLike(nome);
-        if (usuarios.isEmpty()) {
-            throw new RuntimeException("Nenhum usuário encontrado com nome semelhante a: " + nome);
+    public List<UsuarioResponseDTO> getNomes(List<String> nomes) {
+        List<Usuario> encontrados = new ArrayList<>();
+
+        for (String nome : nomes) {
+            List<Usuario> usuarios = usuarioRepository.findByNomeIgnoreCaseLike("%" + nome + "%");
+            encontrados.addAll(usuarios);
         }
-        return converterParaDTO(usuarios);
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum usuário encontrado semelhante aos nomes fornecidos: " + nomes);
+        }
+
+        return converterParaDTO(encontrados);
     }
 
-    public List<UsuarioResponseDTO> findByCPF(String cpf) {
-        List<Usuario> usuarios = usuarioRepository.findByCpf(cpf);
-        if (usuarios.isEmpty()) {
-            throw new RuntimeException("Nenhum usuário encontrado com o CPF: " + cpf);
-        }
-        return converterParaDTO(usuarios);
-    }
+    public List<UsuarioResponseDTO> findByEmails(List<String> emails) {
+        Set<Usuario> encontrados = new HashSet<>();
 
-    public List<UsuarioResponseDTO> findByEmail(String email) {
-        List<Usuario> usuarios = usuarioRepository.findByEmailIgnoreCaseLike(email);
-        if (usuarios.isEmpty()) {
-            throw new RuntimeException("Nenhum usuário encontrado com email semelhante a: " + email);
+        for (String email : emails) {
+            List<Usuario> usuarios = usuarioRepository.findByEmailIgnoreCaseLike("%" + email + "%");
+            encontrados.addAll(usuarios);
         }
-        return converterParaDTO(usuarios);
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum usuário encontrado com e-mail semelhante aos fornecidos: " + emails);
+        }
+
+        return converterParaDTO(new ArrayList<>(encontrados));
     }
 
     public List<UsuarioResponseDTO> isAdmins(boolean isAdmin) {
-        List<Usuario> usuarios = usuarioRepository.findByIsAdmin(isAdmin);
+        List<Usuario> usuarios = usuarioRepository.findAllByIsAdmin(isAdmin);
         if (usuarios.isEmpty()) {
             throw new RuntimeException("Nenhum usuário encontrado com status de administrador: " + isAdmin);
         }
         return converterParaDTO(usuarios);
     }
 
-    public List<UsuarioResponseDTO> findByCargos(List<String> cargo) {
-        List<Usuario> usuarios = usuarioRepository.findByCargoNomeCargoIgnoreCaseIn(cargo);
-        if (usuarios.isEmpty()) {
-            throw new RuntimeException("Nenhum usuário encontrado com os cargos fornecidos.");
+    public List<UsuarioResponseDTO> findByCargos(List<String> cargos) {
+        Set<Usuario> encontrados = new HashSet<>();
+
+        for (String cargo : cargos) {
+            List<Usuario> usuarios = usuarioRepository
+                .findByCargoNomeCargoIgnoreCaseLike("%" + cargo + "%");
+            encontrados.addAll(usuarios);
         }
-        return converterParaDTO(usuarios);
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum usuário encontrado com cargos semelhantes aos fornecidos: " + cargos);
+        }
+
+        return converterParaDTO(new ArrayList<>(encontrados));
     }
 
     public List<UsuarioResponseDTO> findByDepartamentos(List<String> departamentos) {
-        List<Usuario> usuarios = usuarioRepository.findByDepartamentoNomeDepartamentoIgnoreCaseIn(departamentos);
-        if (usuarios.isEmpty()) {
-            throw new RuntimeException("Nenhum usuário encontrado com os departamentos fornecidos.");
+        Set<Usuario> encontrados = new HashSet<>();
+
+        for (String departamento : departamentos) {
+            List<Usuario> usuarios = usuarioRepository
+                .findByDepartamentoNomeDepartamentoIgnoreCaseLike("%" + departamento + "%");
+            encontrados.addAll(usuarios);
         }
-        return converterParaDTO(usuarios);
+
+        if (encontrados.isEmpty()) {
+            throw new RuntimeException("Nenhum usuário encontrado com departamentos semelhantes aos fornecidos: " + departamentos);
+        }
+
+        return converterParaDTO(new ArrayList<>(encontrados));
     }
+
 
     public List<UsuarioResponseDTO> findByModeloModeloTrabalho(List<ModeloTrabalho> modelos) {
         List<Usuario> usuarios = usuarioRepository.findByModeloIn(modelos);
+
         if (usuarios.isEmpty()) {
             throw new RuntimeException("Nenhum usuário encontrado com os modelos de trabalho fornecidos.");
         }
+
         return converterParaDTO(usuarios);
     }
 
-    public List<UsuarioResponseDTO> findByEscritorio(List<String> escritorio) {
-        List<Usuario> usuarios = usuarioRepository.findByEscritorioNomeEscritorioIgnoreCaseIn(escritorio);
+    public List<UsuarioResponseDTO> findByEscritorio(List<String> escritorios) {
+        List<Usuario> usuarios = new ArrayList<>();
+
+        for (String escritorio : escritorios) {
+            usuarios.addAll(usuarioRepository.findByEscritorioNomeEscritorioIgnoreCaseLike("%" + escritorio + "%"));
+        }
+
         if (usuarios.isEmpty()) {
             throw new RuntimeException("Nenhum usuário encontrado com os escritórios fornecidos.");
         }
-        return converterParaDTO(usuarios);
+
+        // Remove duplicados
+        List<Usuario> usuariosUnicos = usuarios.stream()
+            .distinct()
+            .collect(Collectors.toList());
+
+        return converterParaDTO(usuariosUnicos);
     }
 
     public UsuarioResponseDTO create(UsuarioRequestDTO dto) {
         Usuario entidade = usuarioMapper.toEntity(dto);
-        // A senha já está sendo codificada no mapper, então removemos essa linha
-        // entidade.setSenha(encoder.encode(entidade.getSenha()));
         Usuario salvo = usuarioRepository.save(entidade);
         return usuarioMapper.toDto(salvo);
     }
@@ -177,10 +226,20 @@ public class UsuarioService {
         return usuarioMapper.toDto(atualizado);
     }
 
-    public void delete(Long id){
+    public void deleteId(Long id){
         Usuario user = usuarioRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
         
         usuarioRepository.delete(user);
+    }
+
+    public void deleteIds(List<Long> ids) {
+        List<Usuario> usuarios = usuarioRepository.findAllById(ids);
+
+        if (usuarios.isEmpty()) {
+            throw new RuntimeException("Nenhum usuário encontrado com os IDs fornecidos.");
+        }
+
+        usuarioRepository.deleteAll(usuarios);
     }
 }

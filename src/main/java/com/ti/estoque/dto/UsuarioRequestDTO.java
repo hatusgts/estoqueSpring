@@ -2,6 +2,10 @@ package com.ti.estoque.dto;
 
 import java.time.LocalDate;
 
+import org.hibernate.validator.constraints.br.CPF;
+
+import com.ti.estoque.dto.validation.OnCreate;
+import com.ti.estoque.dto.validation.OnUpdate;
 import com.ti.estoque.enums.ModeloTrabalho;
 
 import jakarta.validation.constraints.NotBlank;
@@ -13,20 +17,22 @@ import lombok.Setter;
 @Setter
 public class UsuarioRequestDTO {
 
+    @NotNull(message="Id não pode ser nulo em Update", groups=OnUpdate.class)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message="Nome não pode ser nulo", groups={OnUpdate.class, OnCreate.class})
     private String nome;
 
+    @CPF(message="CPF inválido")
     private String cpf;
 
-    @NotBlank
+    @NotBlank(message="Email não pode ser nulo", groups={OnUpdate.class, OnCreate.class})
     private String email;
 
     @NotNull
     private boolean isAdmin;
 
-    @NotBlank
+    @NotBlank(message="Senha não pode ser nulo", groups={OnCreate.class})
     private String senha;
 
     private Long idCargo;
@@ -39,6 +45,6 @@ public class UsuarioRequestDTO {
 
     private LocalDate dataCadastro;
 
-    @NotNull
+    @NotNull(message="Ativo não pode ser nulo", groups={OnUpdate.class, OnCreate.class})
     private boolean isAtivo;
 }
