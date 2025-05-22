@@ -1,1 +1,1 @@
-# estoqueSpring
+# Projeto controle de estoque e gerenciamento de equipamentos backend em java com spring
