@@ -33,6 +33,10 @@ public class MovimentacaoEquipamento {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    private Usuario admin;
+
     private LocalDate dataMovimentacao;
 
 }

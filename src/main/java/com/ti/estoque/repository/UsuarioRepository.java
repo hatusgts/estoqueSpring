@@ -1,5 +1,6 @@
 package com.ti.estoque.repository;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> findByNomeIgnoreCaseIn(List<String> nome);
 
     List<Usuario> findByCpf(String cpf);
+    Optional<Usuario> findByEmailIgnoreCase(String email);
     List<Usuario> findByEmailIgnoreCaseLike(String email);
     List<Usuario> findByIsAdmin(boolean isAdmin);
     List<Usuario> findAllByIsAdmin(boolean isAdmin);

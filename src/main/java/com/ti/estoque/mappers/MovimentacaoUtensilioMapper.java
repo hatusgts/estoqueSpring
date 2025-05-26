@@ -18,7 +18,6 @@ public class MovimentacaoUtensilioMapper {
     private final UsuarioRepository usuarioRepository;
     private final UtensilioRepository utensilioRepository;
     
-    // Usar injeção por construtor em vez de @Autowired
     public MovimentacaoUtensilioMapper(
         UsuarioRepository usuarioRepository,
         UtensilioRepository utensilioRepository

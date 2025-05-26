@@ -2,21 +2,32 @@ package com.ti.estoque.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().authenticated() // Todas as rotas exigem autenticação
+                .requestMatchers("/auth/login").permitAll()  // libera o login
+                .anyRequest().authenticated()
             )
-            .httpBasic() // Ou .formLogin(), ou outro tipo de autenticação
-            .and()
-            .csrf().disable(); // Desativa CSRF para APIs (use com cuidado)
+            .httpBasic(Customizer.withDefaults()); // Habilita autenticação HTTP (usada pelo AuthenticationManager)
 
         return http.build();
     }

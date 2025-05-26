@@ -1,6 +1,7 @@
 package com.ti.estoque.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.ti.estoque.enums.ModeloTrabalho;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,5 +52,11 @@ public class Usuario {
     private LocalDate dataCadastro;
 
     private boolean isAtivo;
+
+    @OneToMany(mappedBy="usuario")
+    private List<MovimentacaoEquipamento> usuario;
+
+    @OneToMany(mappedBy="admin")
+    private List<MovimentacaoEquipamento> admins;
 
 }
