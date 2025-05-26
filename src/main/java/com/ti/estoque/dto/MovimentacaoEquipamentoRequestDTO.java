@@ -7,12 +7,12 @@ import com.ti.estoque.dto.validation.OnUpdate;
 import com.ti.estoque.enums.TipoMovimentacao;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class MovimentacaoEquipamentoRequestDTO {
 

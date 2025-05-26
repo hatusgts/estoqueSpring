@@ -250,7 +250,7 @@ public class MovimentacaoUtensilioService {
 
         moviment.setQuantidade(dto.getQuantidade());
 
-        moviment.setTipoMovimentacao(dto.getTipoMovimentacao());
+        moviment.setTipoMovimentacao((dto.getTipoMovimentacao()));
 
         moviment.setUsuario(
             usuarioRepository.findById(dto.getId())

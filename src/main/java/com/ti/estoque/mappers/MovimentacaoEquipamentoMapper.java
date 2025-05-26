@@ -12,11 +12,6 @@ import com.ti.estoque.model.Usuario;
 import com.ti.estoque.repository.EquipamentoRepository;
 import com.ti.estoque.repository.UsuarioRepository;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 @Component
 public class MovimentacaoEquipamentoMapper {
 

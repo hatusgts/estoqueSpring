@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ti.estoque.dto.MovimentacaoUtensilioRequestDTO;
@@ -19,18 +21,15 @@ import com.ti.estoque.dto.validation.OnCreate;
 import com.ti.estoque.dto.validation.OnUpdate;
 import com.ti.estoque.service.MovimentacaoUtensilioService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
-@RequestMapping("/Movimentacao-Utensilios")
+@RequestMapping("/Movimentacao-Utensilio")
 public class MovimentacaoUtensilioController {
 
     @Autowired
     private MovimentacaoUtensilioService movimentacaoService;
 
-    @PostMapping("/cadastro")
+    @PostMapping("/new")
     public ResponseEntity<MovimentacaoUtensilioResponseDTO> create(@Validated(OnCreate.class)@RequestBody MovimentacaoUtensilioRequestDTO movimentacao){
         return ResponseEntity.ok(movimentacaoService.create(movimentacao));
     }

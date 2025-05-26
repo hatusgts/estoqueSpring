@@ -7,7 +7,6 @@ import com.ti.estoque.dto.validation.OnUpdate;
 import com.ti.estoque.enums.TipoMovimentacao;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +25,7 @@ public class MovimentacaoUtensilioRequestDTO {
     @NotNull(message="Quantidade não pode ser nulo", groups={OnUpdate.class,OnCreate.class})
     private Integer quantidade;
 
-    @NotBlank(message = "O tipo de movimentação é obrigatório", groups={OnUpdate.class,OnCreate.class})
+    @NotNull(message = "O tipo de movimentação é obrigatório", groups={OnUpdate.class,OnCreate.class})
     private TipoMovimentacao tipoMovimentacao;
 
     @NotNull(message = "IdUsuario é obrigatório", groups={OnUpdate.class,OnCreate.class})

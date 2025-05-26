@@ -14,11 +14,16 @@ import com.ti.estoque.repository.UtensilioRepository;
 
 @Component
 public class MovimentacaoUtensilioMapper {
+
     private final UsuarioRepository usuarioRepository;
     private final UtensilioRepository utensilioRepository;
-
-    public MovimentacaoUtensilioMapper(UsuarioRepository usuarioRepository1, UtensilioRepository utensilioRepository){
-        this.usuarioRepository = usuarioRepository1;
+    
+    // Usar injeção por construtor em vez de @Autowired
+    public MovimentacaoUtensilioMapper(
+        UsuarioRepository usuarioRepository,
+        UtensilioRepository utensilioRepository
+    ) {
+        this.usuarioRepository = usuarioRepository;
         this.utensilioRepository = utensilioRepository;
     }
 
@@ -26,13 +31,12 @@ public class MovimentacaoUtensilioMapper {
         MovimentacaoUtensilio entity = new MovimentacaoUtensilio();
 
         Utensilio utensilio = utensilioRepository.findById(dto.getIdUtensilio())
-        .orElseThrow(() -> new RuntimeException("Utensilio não encontrado"));
+            .orElseThrow(() -> new RuntimeException("Utensilio não encontrado"));
 
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
-        .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+            .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
 
         entity.setUtensilio(utensilio);
-
         entity.setQuantidade(dto.getQuantidade());
 
         entity.setTipoMovimentacao(dto.getTipoMovimentacao());
@@ -41,18 +45,24 @@ public class MovimentacaoUtensilioMapper {
 
         if(dto.getDataMovimentacao() != null){
             entity.setDataMovimentacao(dto.getDataMovimentacao());
-        }else{
+        } else {
             entity.setDataMovimentacao(LocalDate.now());
         }
 
         return entity;
     }
 
+
     public MovimentacaoUtensilioResponseDTO toDto(MovimentacaoUtensilio entity){
         MovimentacaoUtensilioResponseDTO dto = new MovimentacaoUtensilioResponseDTO();
 
         dto.setId(entity.getId());
-        dto.setUtensilio(entity.getUtensilio().toString());
+
+        Utensilio utensilio = entity.getUtensilio();
+        String descricaoUtensilio = "ID: " + utensilio.getId();
+
+        dto.setUtensilio(descricaoUtensilio);
+
         dto.setQuantidade(entity.getQuantidade());
         dto.setTipoMovimentacao(entity.getTipoMovimentacao().toString());
         dto.setUsuario(entity.getUsuario().getNome());
