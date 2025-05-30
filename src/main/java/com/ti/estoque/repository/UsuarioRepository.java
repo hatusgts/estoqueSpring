@@ -10,6 +10,9 @@ import com.ti.estoque.model.Usuario;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+
+    //Autenticacao
+    Optional<Usuario> findByEmailIgnoreCase(String email);
     
     //Pesquisas Por apenas um atributo
     
@@ -19,7 +22,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> findByNomeIgnoreCaseIn(List<String> nome);
 
     List<Usuario> findByCpf(String cpf);
-    Optional<Usuario> findByEmailIgnoreCase(String email);
     List<Usuario> findByEmailIgnoreCaseLike(String email);
     List<Usuario> findByIsAdmin(boolean isAdmin);
     List<Usuario> findAllByIsAdmin(boolean isAdmin);
